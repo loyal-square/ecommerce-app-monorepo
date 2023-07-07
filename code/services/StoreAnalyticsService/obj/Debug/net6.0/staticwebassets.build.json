@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "4V9jb+3HvKLVaeqyLCtxt4ypb23o5wdToJ6qCdXqxtg=",
+  "Source": "StoreAnalyticsService",
+  "BasePath": "_content/StoreAnalyticsService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
