@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj": {}
+    "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj": {}
   },
   "projects": {
-    "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj": {
+    "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj",
+        "projectUniqueName": "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj",
         "projectName": "OrdersService",
-        "projectPath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj",
-        "packagesPath": "C:\\Users\\GGPC\\.nuget\\packages\\",
-        "outputPath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\obj\\",
+        "projectPath": "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj",
+        "packagesPath": "C:\\Users\\ImSoN\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\GGPC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ImSoN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -72,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.411\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.103\\RuntimeIdentifierGraph.json"
         }
       }
     }

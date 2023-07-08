@@ -5464,19 +5464,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\GGPC\\.nuget\\packages\\": {}
+    "C:\\Users\\ImSoN\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\ProfileService\\ProfileService.csproj",
+      "projectUniqueName": "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\ProfileService\\ProfileService.csproj",
       "projectName": "ProfileService",
-      "projectPath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\ProfileService\\ProfileService.csproj",
-      "packagesPath": "C:\\Users\\GGPC\\.nuget\\packages\\",
-      "outputPath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\ProfileService\\obj\\",
+      "projectPath": "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\ProfileService\\ProfileService.csproj",
+      "packagesPath": "C:\\Users\\ImSoN\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ImSoN\\web-development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\ProfileService\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\GGPC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ImSoN\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5534,7 +5534,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.411\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   }
