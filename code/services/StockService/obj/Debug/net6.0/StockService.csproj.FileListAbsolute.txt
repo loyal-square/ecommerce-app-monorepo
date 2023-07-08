@@ -52,3 +52,10 @@ D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockServic
 D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\obj\Debug\net6.0\StockService.pdb
 D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\obj\Debug\net6.0\StockService.genruntimeconfig.cache
 D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\obj\Debug\net6.0\ref\StockService.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\Npgsql.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\Remotion.Linq.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\StockService\bin\Debug\net6.0\System.Interactive.Async.dll

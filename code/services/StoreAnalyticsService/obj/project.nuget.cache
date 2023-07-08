@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "tb5yh0xYoUxU0/bQnIOqypK2Y5iDDukQ5oG/nayf8BqFUTPWTNlyLiqVvO98cyqcCQNMgCv8DYub9+qUhhdBmQ==",
+  "dgSpecHash": "6PX7TGXjOu0FQRRrxMdqWJFZu0LfWhOJVSnb+LljzJZE04YZxc1BU8SA7XqmuztTkTonZNNH24sbIUXVM84guA==",
   "success": true,
   "projectFilePath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\StoreAnalyticsService\\StoreAnalyticsService.csproj",
   "expectedPackageFiles": [

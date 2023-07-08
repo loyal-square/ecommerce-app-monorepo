@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bjm4v1eh9Pp2ZUAaSvlIYVUP8g0niYYcS4Wrf1FV6JMx76W18nMNTpXEK6Y0gliGyHNR+gj7GlbfWnDfFGiDRw==",
+  "dgSpecHash": "IhcBWNOroEpQknwB6Ibj6bp/SGqGKycT2EDToHyu4xORmZZn/f6O6RInT2DtGVK3llP4mv4aOg0cm+AuiNB27A==",
   "success": true,
   "projectFilePath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\StockService\\StockService.csproj",
   "expectedPackageFiles": [

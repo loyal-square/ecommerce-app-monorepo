@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Mieq7OeAlF6zP1vpv8xCsBjTqA7AwwiSVJ0iNkyuU7b/LM6bVLW40FZcKoZqW5jU1nA6dVRpXMJRpCsRjSyBXQ==",
+  "dgSpecHash": "01kOV6JYFJq9PgD95GCbZw4Rc2EZ5Syps/LU7ktRwT6EnOSKbX1YrmcaJ7NjcZWRkiID2JrGdmJtXZq9f8hGUA==",
   "success": true,
   "projectFilePath": "D:\\web_development\\loyal-square\\ecommerce-app-monorepo\\code\\services\\OrdersService\\OrdersService.csproj",
   "expectedPackageFiles": [

@@ -10,14 +10,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["StoreAnalyticsService/StoreAnalyticsService.csproj", "StoreAnalyticsService/"]
+COPY ["StoreAnalyticsService.csproj", "StoreAnalyticsService/"]
 RUN dotnet restore "StoreAnalyticsService/StoreAnalyticsService.csproj"
-COPY . .
 WORKDIR "/src/StoreAnalyticsService"
-RUN dotnet build "StoreAnalyticsService.csproj" -c Release -o /app/build
+COPY . .
+RUN dotnet build "StoreAnalyticsService.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "StoreAnalyticsService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "StoreAnalyticsService.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
