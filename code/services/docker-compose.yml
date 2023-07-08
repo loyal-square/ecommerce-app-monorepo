@@ -1,0 +1,75 @@
+﻿# /docker-compose.yml
+version: "3"
+
+volumes:
+  local_postgres_data: {}
+
+services:
+  ordersservice:
+    build:
+      context: ./OrdersService
+      dockerfile: ./Dockerfile
+    ports:
+      - "5000"
+    volumes:
+      - ./OrdersService:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      - db
+  profileservice:
+    build:
+      context: ./ProfileService
+      dockerfile: ./Dockerfile
+    ports:
+      - "5001"
+    volumes:
+      - ./ProfileService:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      - db
+  stockservice:
+    build:
+      context: ./StockService
+      dockerfile: ./Dockerfile
+    ports:
+      - "5002"
+    volumes:
+      - ./StockService:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      - db
+  storeanalyticsservice:
+    build:
+      context: ./StoreAnalyticsService
+      dockerfile: ./Dockerfile
+    ports:
+      - "5003"
+    volumes:
+      - ./StoreAnalyticsService:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      - db
+  storeservice:
+    build:
+      context: ./StoreService
+      dockerfile: ./Dockerfile
+    ports:
+      - "5004"
+    volumes:
+      - ./StoreService:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      - db
+
+  db:
+    image: postgres:11.1
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USERNAME: postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data

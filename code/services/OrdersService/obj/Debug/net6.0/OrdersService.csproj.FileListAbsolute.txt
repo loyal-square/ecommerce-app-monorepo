@@ -52,3 +52,10 @@ D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersServi
 D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\obj\Debug\net6.0\OrdersService.pdb
 D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\obj\Debug\net6.0\OrdersService.genruntimeconfig.cache
 D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\obj\Debug\net6.0\ref\OrdersService.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\Npgsql.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\Remotion.Linq.dll
+D:\web_development\loyal-square\ecommerce-app-monorepo\code\services\OrdersService\bin\Debug\net6.0\System.Interactive.Async.dll
