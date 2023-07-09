@@ -1,7 +1,9 @@
-namespace ProfileService.Models
+namespace StoreAnalyticsService.Models
 {
-    public class WeatherForecast
+    public class StoreAnalytics
     {
+        public int Id { get; set; }
+
         public DateTime Date { get; set; }
 
         public int TemperatureC { get; set; }

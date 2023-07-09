@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProfileService.Models;
+using StoreService.Models;
 
-namespace ProfileService.Database
+namespace StoreService.Database
 {
     public class ApiDbContext : DbContext
     {
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) { }
 
-        public DbSet<Orders> Orders { get; set; }
+        public DbSet<Stores> Stores { get; set; }
     }
 }

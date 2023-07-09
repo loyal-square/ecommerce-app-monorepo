@@ -10,7 +10,7 @@ services:
       context: ./OrdersService
       dockerfile: ./Dockerfile
     ports:
-      - "5000"
+      - 5000:80
     volumes:
       - ./OrdersService:/app
       - /app/bin
@@ -22,7 +22,7 @@ services:
       context: ./ProfileService
       dockerfile: ./Dockerfile
     ports:
-      - "5001"
+      - 5001:80
     volumes:
       - ./ProfileService:/app
       - /app/bin
@@ -34,7 +34,7 @@ services:
       context: ./StockService
       dockerfile: ./Dockerfile
     ports:
-      - "5002"
+      - 5002:80
     volumes:
       - ./StockService:/app
       - /app/bin
@@ -46,7 +46,7 @@ services:
       context: ./StoreAnalyticsService
       dockerfile: ./Dockerfile
     ports:
-      - "5003"
+      - 5003:80
     volumes:
       - ./StoreAnalyticsService:/app
       - /app/bin
@@ -58,7 +58,7 @@ services:
       context: ./StoreService
       dockerfile: ./Dockerfile
     ports:
-      - "5004"
+      - 5004:80
     volumes:
       - ./StoreService:/app
       - /app/bin

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using OrdersService.Models;
+using ProfileService.Models;
 
-namespace OrdersService.Controllers
+namespace ProfileService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -20,9 +20,9 @@ namespace OrdersService.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<Orders> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Enumerable.Range(1, 5).Select(index => new Orders
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = Random.Shared.Next(-20, 55),

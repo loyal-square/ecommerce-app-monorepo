@@ -7,6 +7,6 @@ namespace ProfileService.Database
     {
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) { }
 
-        public DbSet<Orders> Orders { get; set; }
+        public DbSet<Profiles> Profiles { get; set; }
     }
 }

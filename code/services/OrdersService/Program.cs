@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using OrdersService.Database;
+using ProfileService.Database;
 
-namespace OrdersService
+namespace ProfileService
 {
     public class Program
     {
@@ -36,12 +35,14 @@ namespace OrdersService
             }
 
 
-            // Configure the HTTP request pipeline.
+             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                
             }
+            
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 

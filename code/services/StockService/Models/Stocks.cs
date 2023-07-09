@@ -1,7 +1,9 @@
-namespace StoreService.Models
+namespace StockService.Models
 {
-    public class WeatherForecast
+    public class Stocks
     {
+        public int Id { get; set; }
+
         public DateTime Date { get; set; }
 
         public int TemperatureC { get; set; }

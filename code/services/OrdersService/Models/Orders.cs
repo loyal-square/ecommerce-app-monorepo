@@ -1,6 +1,6 @@
-namespace OrdersService.Models
+namespace ProfileService.Models
 {
-    public class WeatherForecast
+    public class Orders
     {
         public int Id { get; set; }
 

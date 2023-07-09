@@ -7,11 +7,11 @@ namespace ProfileService.Database
         public static void Initialize(ApiDbContext ctx)
         {
             ctx.Database.EnsureCreated();
-            if (!ctx.Orders.Any())
+            if (!ctx.Profiles.Any())
             {
-                ctx.Orders.Add(new Orders { Summary = "plumbus" });
-                ctx.Orders.Add(new Orders { Summary = "flux capacitor" });
-                ctx.Orders.Add(new Orders { Summary = "spline reticulator" });
+                ctx.Profiles.Add(new Profiles { Summary = "plumbus" });
+                ctx.Profiles.Add(new Profiles { Summary = "flux capacitor" });
+                ctx.Profiles.Add(new Profiles { Summary = "spline reticulator" });
                 ctx.SaveChanges();
             }
         }
