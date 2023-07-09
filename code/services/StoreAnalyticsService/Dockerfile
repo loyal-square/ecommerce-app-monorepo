@@ -17,7 +17,7 @@ COPY . .
 RUN dotnet build "StoreAnalyticsService.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "StoreAnalyticsService.csproj" -c Debug -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "StoreAnalyticsService.csproj" -c Debug -o /app/publish 
 
 FROM base AS final
 WORKDIR /app

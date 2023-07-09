@@ -17,7 +17,7 @@ COPY . .
 RUN dotnet build "ProfileService.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ProfileService.csproj" -c Debug -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ProfileService.csproj" -c Debug -o /app/publish 
 
 FROM base AS final
 WORKDIR /app
