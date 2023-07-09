@@ -67,11 +67,13 @@ services:
       - db
 
   db:
+    container_name: loyalsquare-db
     image: postgres:11.1
     ports:
-      - '5432:5432'
+      - '6543:6544'
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USERNAME: postgres
+      POSTGRES_DB: loyalsquare-db
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
