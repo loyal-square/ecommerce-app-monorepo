@@ -8,5 +8,6 @@ namespace StockService.Database
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) { }
 
         public DbSet<Stocks> Stocks { get; set; }
+        public DbSet<Images> Images { get; set; }
     }
 }

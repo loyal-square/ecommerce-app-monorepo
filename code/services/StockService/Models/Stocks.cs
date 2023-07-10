@@ -1,3 +1,6 @@
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.ComponentModel.DataAnnotations;
+
 namespace StockService.Models
 {
     public class Stocks
