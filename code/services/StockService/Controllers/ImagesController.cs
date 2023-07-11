@@ -11,30 +11,36 @@ namespace StockService.Controllers
     [Route("[controller]")]
     public class ImagesController : ControllerBase
     {
-        // GET: api/<ImagesController>
         [HttpGet]
-        public async Task<List<Images>> GetImagesS3([FromQuery] string[] stockIds)
+        public async Task<List<Image>> GetImages([FromQuery] int[] stockIds)
         {
             //Call database method here to return a list of Image typed objects
-            return await DbInitializer.context.Images.Where(image => stockIds.Contains(image.StockId.ToString())).ToListAsync();
+            return await DbInitializer.context.Images.Where(image => stockIds.Contains(image.StockId)).ToListAsync();
         }
 
-        // POST api/<ImagesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ImagesController>/5
         [HttpPut]
-        public void Put([FromRoute] int id, [FromBody] string value)
+        public async Task<Image> CreateImage([FromBody] Image image)
         {
+            var newImage = (await DbInitializer.context.Images.AddAsync(image)).Entity;
+            await DbInitializer.context.SaveChangesAsync();
+            
+            return newImage;
         }
-
-        // DELETE api/<ImagesController>/5
+        
         [HttpDelete]
-        public void Delete(int id)
+        [Route("imageId/{imageId:int}")]
+        public async void DeleteByImageId(int imageId)
         {
+            DbInitializer.context.Images.Remove(await DbInitializer.context.Images.Where(img => img.Id.Equals(imageId)).FirstOrDefaultAsync() ?? new Image());
+            await DbInitializer.context.SaveChangesAsync();
+        }
+        
+        [HttpDelete]
+        [Route("stockId/{stockId:int}")]
+        public async void DeleteByStockId(int stockId)
+        {
+            DbInitializer.context.Images.RemoveRange(await DbInitializer.context.Images.Where(img => img.StockId.Equals(stockId)).ToListAsync());
+            await DbInitializer.context.SaveChangesAsync();
         }
     }
 }

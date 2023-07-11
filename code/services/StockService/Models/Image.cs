@@ -2,12 +2,10 @@
 
 namespace StockService.Models
 {
-    public class Images
+    public class Image
     {
         public int Id { get; set; }
-
-        [Required]
-        public Guid StockId { get; set; }
+        public int StockId { get; set; }
         public string AWSImgUrl { get; set; }
     }
 }
