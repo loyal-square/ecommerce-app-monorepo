@@ -19,25 +19,25 @@ namespace StockService.Controllers
     {
         [HttpGet]
         [Route("/byStockIds")]
-        public async Task<List<Stock>> GetStocksByStockIds([FromQuery] string[] stockIds, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
+        public async Task<PaginatedResult> GetStocksByStockIds([FromQuery] string[] stockIds, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
         {
             var allStocks = await DbInitializer.context.Stocks.Where(stock => stockIds.Contains(stock.Id.ToString())).ToListAsync();
 
             
-            return PaginateResults(allStocks, itemsPerPage, pageNumber);
+            return PaginateResults((dynamic)allStocks, itemsPerPage, pageNumber);
         }
         
         [HttpGet]
         [Route("/byStoreIds")]
-        public async Task<List<Stock>> GetStocksByStoreId([FromQuery] int storeId, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
+        public async Task<PaginatedResult> GetStocksByStoreId([FromQuery] int storeId, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
         {
             var allStocks = await DbInitializer.context.Stocks.Where(stock => storeId.Equals(stock.StoreId)).ToListAsync();
-            return PaginateResults(allStocks, itemsPerPage, pageNumber);
+            return PaginateResults((dynamic)allStocks, itemsPerPage, pageNumber);
         }
 
         [HttpGet]
         [Route("/onsale/{stockName}")]
-        public async Task<List<Stock>> GetOnSaleStocks([FromQuery] float minimumPriceMultiplier, string stockName, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
+        public async Task<PaginatedResult> GetOnSaleStocks([FromQuery] float minimumPriceMultiplier, string stockName, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
         {
             var onSaleStocks = DbInitializer.context.Stocks.Select(stock => new StockForServer()
             {
@@ -77,7 +77,7 @@ namespace StockService.Controllers
                 StoreId = stock.StoreId,
             }).ToListAsync();
 
-            return PaginateResults(onSaleStocksOutput, itemsPerPage, pageNumber);
+            return PaginateResults((dynamic)onSaleStocksOutput, itemsPerPage, pageNumber);
         }
 
         [HttpPut]
@@ -122,9 +122,9 @@ namespace StockService.Controllers
             await DbInitializer.context.SaveChangesAsync();
         }
         #region private
-        private List<Stock> PaginateResults(List<Stock> unpaginatedItems, int itemsPerPage, int pageNumber)
+        private PaginatedResult PaginateResults(dynamic unpaginatedItems, int itemsPerPage, int pageNumber)
         {
-            var paginatedItems = new List<Stock>();
+            dynamic paginatedItems = new List<dynamic>();
             var currentPage = 1;
             var currentItemCounter = 1;
             for (var i = 0; i < unpaginatedItems.Count; i++)
@@ -144,7 +144,12 @@ namespace StockService.Controllers
                     currentItemCounter = 1;
                 }
             }
-            return paginatedItems;
+            return new PaginatedResult()
+            {
+                PaginatedItems = paginatedItems,
+                TotalItems = unpaginatedItems.Count,
+                TotalPages = (int)Math.Ceiling((float)unpaginatedItems.Count / (float)itemsPerPage) 
+            };
         }
         #endregion
     }
