@@ -21,6 +21,7 @@ namespace StockService.Controllers
         [HttpPut]
         public async Task<Image> CreateImage([FromBody] Image image)
         {
+            image.Id = 0;
             var newImage = (await DbInitializer.context.Images.AddAsync(image)).Entity;
             await DbInitializer.context.SaveChangesAsync();
             

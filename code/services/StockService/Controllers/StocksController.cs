@@ -23,10 +23,10 @@ namespace StockService.Controllers
         {
             var allStocks = await DbInitializer.context.Stocks.Where(stock => stockIds.Contains(stock.Id.ToString())).ToListAsync();
 
-            
+
             return PaginateResults((dynamic)allStocks, itemsPerPage, pageNumber);
         }
-        
+
         [HttpGet]
         [Route("/byStoreIds")]
         public async Task<PaginatedResult> GetStocksByStoreId([FromQuery] int storeId, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
@@ -36,9 +36,26 @@ namespace StockService.Controllers
         }
 
         [HttpGet]
-        [Route("/onsale/{stockName}")]
-        public async Task<PaginatedResult> GetOnSaleStocks([FromQuery] float minimumPriceMultiplier, string stockName, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
+        [Route("/onsale")]
+        public async Task<PaginatedResult> GetOnSaleStocks([FromQuery] float? minimumPriceMultiplier, [FromQuery] string? stockName, [FromQuery] int? pageNumber, [FromQuery] int? itemsPerPage)
         {
+            if(stockName == null)
+            {
+                stockName = "";
+            }
+            if(minimumPriceMultiplier == null)
+            {
+                minimumPriceMultiplier = 1;
+            }
+            if(pageNumber == null)
+            {
+                pageNumber = 1;
+            }
+            if(itemsPerPage == null)
+            {
+                itemsPerPage = 10;
+            }
+
             var onSaleStocks = DbInitializer.context.Stocks.Select(stock => new StockForServer()
             {
                 Id = stock.Id,
@@ -51,16 +68,19 @@ namespace StockService.Controllers
                 CategoryId = stock.CategoryId,
                 CreatedDate = stock.CreatedDate,
                 ExpiryDate = stock.ExpiryDate,
-                RatingsArray = JsonConvert.DeserializeObject<StockRating[]>(stock.RatingsArrayString ?? ""),
-                PriceMultiplier = JsonConvert.DeserializeObject<PriceMultiplier>(stock.PriceMultiplierObjString ?? "") ?? null,
+                RatingsArray = JsonConvert.DeserializeObject<StockRating[]>(stock.RatingsArrayString),
+                PriceMultiplier = JsonConvert.DeserializeObject<PriceMultiplier>(stock.PriceMultiplierObjString) ?? null,
                 StoreId = stock.StoreId,
-            });
+            }).ToList();
 
             onSaleStocks = onSaleStocks
-                .Where(stock => stock.PriceMultiplier != null && stock.Name.Trim().ToLower().Contains(stockName.Trim().ToLower()) && stock.PriceMultiplier.DecimalMultiplier >= minimumPriceMultiplier && stock.PriceMultiplier.CreatedDate >= DateTime.UtcNow && stock.PriceMultiplier.ExpiryDate > DateTime.UtcNow)
-                .OrderByDescending(stock => stock.PriceMultiplier.DecimalMultiplier);
+                .Where(stock => stock.Available == true && stock.Quantity > 0 && stock.ExpiryDate > DateTime.UtcNow && stock.Name.Trim().ToLower().Contains(stockName.Trim().ToLower()))
+                .Where(stock => stock.PriceMultiplier != null && stock.PriceMultiplier.DecimalMultiplier <= minimumPriceMultiplier && stock.PriceMultiplier.CreatedDate <= DateTime.UtcNow && stock.PriceMultiplier.ExpiryDate > DateTime.UtcNow)
+                .OrderBy(stock => stock.PriceMultiplier.DecimalMultiplier).ToList();
 
-            var onSaleStocksOutput = await onSaleStocks.Select(stock => new Stock()
+            Console.WriteLine(onSaleStocks.ToString());
+
+            var onSaleStocksOutput = onSaleStocks.Select(stock => new Stock()
             {
                 Id = stock.Id,
                 Name = stock.Name,
@@ -75,20 +95,22 @@ namespace StockService.Controllers
                 RatingsArrayString = JsonConvert.SerializeObject(stock.RatingsArray),
                 PriceMultiplierObjString = JsonConvert.SerializeObject(stock.PriceMultiplier),
                 StoreId = stock.StoreId,
-            }).ToListAsync();
+            }).ToList();
 
-            return PaginateResults((dynamic)onSaleStocksOutput, itemsPerPage, pageNumber);
+            return PaginateResults((dynamic)onSaleStocksOutput, (int)itemsPerPage, (int)pageNumber);
         }
 
         [HttpPut]
         [Route("/create")]
         public async Task<Stock> CreateStock([FromBody] Stock stock)
         {
+            stock.Id = 0;
             var newStock = (await DbInitializer.context.Stocks.AddAsync(stock)).Entity;
+            Console.WriteLine(newStock.Id);
             await DbInitializer.context.SaveChangesAsync();
             return newStock;
         }
-        
+
         [HttpPut]
         [Route("/update/{stockId:int}")]
         public async Task<Stock> UpdateStock([FromBody] Stock stockValues, int stockId)
@@ -113,7 +135,7 @@ namespace StockService.Controllers
                 await DbInitializer.context.SaveChangesAsync();
             }
         }
-        
+
         [HttpDelete]
         [Route("storeId/{storeId:int}")]
         public async void DeleteByStoreId(int storeId)
@@ -127,6 +149,7 @@ namespace StockService.Controllers
             dynamic paginatedItems = new List<dynamic>();
             var currentPage = 1;
             var currentItemCounter = 1;
+
             for (var i = 0; i < unpaginatedItems.Count; i++)
             {
                 if (currentItemCounter <= itemsPerPage)
@@ -144,11 +167,12 @@ namespace StockService.Controllers
                     currentItemCounter = 1;
                 }
             }
+
             return new PaginatedResult()
             {
                 PaginatedItems = paginatedItems,
-                TotalItems = unpaginatedItems.Count,
-                TotalPages = (int)Math.Ceiling((float)unpaginatedItems.Count / (float)itemsPerPage) 
+                TotalItems = unpaginatedItems?.Count ?? 0,
+                TotalPages = (int)Math.Ceiling((unpaginatedItems?.Count ?? 0) / (float)itemsPerPage)
             };
         }
         #endregion
