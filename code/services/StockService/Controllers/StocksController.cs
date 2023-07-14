@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using StockService.Database;
@@ -17,6 +19,12 @@ namespace StockService.Controllers
     [Route("[controller]")]
     public class StockController : ControllerBase
     {
+        private readonly IMapper _mapper;
+        public StockController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         [HttpGet]
         [Route("/byStockIds")]
         public async Task<PaginatedResult> GetStocksByStockIds([FromQuery] string[] stockIds, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
@@ -37,7 +45,7 @@ namespace StockService.Controllers
 
         [HttpGet]
         [Route("/onsale")]
-        public async Task<PaginatedResult> GetOnSaleStocks([FromQuery] float? minimumPriceMultiplier, [FromQuery] string? stockName, [FromQuery] int? pageNumber, [FromQuery] int? itemsPerPage)
+        public PaginatedResult GetOnSaleStocks([FromQuery] float? minimumPriceMultiplier, [FromQuery] string? stockName, [FromQuery] int? pageNumber, [FromQuery] int? itemsPerPage)
         {
             if(stockName == null)
             {
@@ -56,46 +64,16 @@ namespace StockService.Controllers
                 itemsPerPage = 10;
             }
 
-            var onSaleStocks = DbInitializer.context.Stocks.Select(stock => new StockForServer()
-            {
-                Id = stock.Id,
-                Name = stock.Name,
-                Currency = stock.Currency,
-                Description = stock.Description,
-                Details = stock.Details,
-                Available = stock.Available,
-                Quantity = stock.Quantity,
-                CategoryId = stock.CategoryId,
-                CreatedDate = stock.CreatedDate,
-                ExpiryDate = stock.ExpiryDate,
-                RatingsArray = JsonConvert.DeserializeObject<StockRating[]>(stock.RatingsArrayString),
-                PriceMultiplier = JsonConvert.DeserializeObject<PriceMultiplier>(stock.PriceMultiplierObjString) ?? null,
-                StoreId = stock.StoreId,
-            }).ToList();
+            var onSaleStocks = _mapper.Map<List<StockForServer>>(DbInitializer.context.Stocks);
 
             onSaleStocks = onSaleStocks
                 .Where(stock => stock.Available == true && stock.Quantity > 0 && stock.ExpiryDate > DateTime.UtcNow && stock.Name.Trim().ToLower().Contains(stockName.Trim().ToLower()))
                 .Where(stock => stock.PriceMultiplier != null && stock.PriceMultiplier.DecimalMultiplier <= minimumPriceMultiplier && stock.PriceMultiplier.CreatedDate <= DateTime.UtcNow && stock.PriceMultiplier.ExpiryDate > DateTime.UtcNow)
-                .OrderBy(stock => stock.PriceMultiplier.DecimalMultiplier).ToList();
+                .OrderBy(stock => stock.PriceMultiplier?.DecimalMultiplier).ToList();
 
             Console.WriteLine(onSaleStocks.ToString());
 
-            var onSaleStocksOutput = onSaleStocks.Select(stock => new Stock()
-            {
-                Id = stock.Id,
-                Name = stock.Name,
-                Currency = stock.Currency,
-                Description = stock.Description,
-                Details = stock.Details,
-                Available = stock.Available,
-                Quantity = stock.Quantity,
-                CategoryId = stock.CategoryId,
-                CreatedDate = stock.CreatedDate,
-                ExpiryDate = stock.ExpiryDate,
-                RatingsArrayString = JsonConvert.SerializeObject(stock.RatingsArray),
-                PriceMultiplierObjString = JsonConvert.SerializeObject(stock.PriceMultiplier),
-                StoreId = stock.StoreId,
-            }).ToList();
+            var onSaleStocksOutput = _mapper.Map<List<Stock>>(onSaleStocks);
 
             return PaginateResults((dynamic)onSaleStocksOutput, (int)itemsPerPage, (int)pageNumber);
         }
