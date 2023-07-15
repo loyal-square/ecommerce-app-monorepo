@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+        public float Price { get; set; }
         public string Currency { get; set; } = "NZD";
         public string Description { get; set; } = string.Empty;
         public string Details { get; set; } = string.Empty;

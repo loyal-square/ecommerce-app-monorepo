@@ -25,6 +25,47 @@ namespace StockService.Controllers
             var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => storeId.Equals(stockRating.StoreId)).ToListAsync();
             return allStocksRatings;
         }
+        
+        [HttpGet]
+        [Route("averageByStock")]
+        public async Task<float> GetAverageStockRatingByStock([FromQuery] int stockId)
+        {
+            var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
+            var sumOfStockRatings = 0f;
+            for (var i = 0; i < allStocksRatings.Count; i++)
+            {
+                sumOfStockRatings += allStocksRatings[i].RatingValue;
+            }
+            
+            return sumOfStockRatings/allStocksRatings.Count;
+        }
+        
+        [HttpGet]
+        [Route("averagesByStocks")]
+        public async Task<List<AverageStockRatings>> GetAverageStockRatingsByStockIds([FromQuery] int[] stockIds)
+        {
+            var averageStockRatings = new List<AverageStockRatings>();
+            
+            for (var i = 0; i < stockIds.Length; i++)
+            {
+                var stockId = stockIds[i];
+                var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
+                var sumOfStockRatings = 0f;
+                for (var j = 0; j < allStocksRatings.Count; j++)
+                {
+                    sumOfStockRatings += allStocksRatings[j].RatingValue;
+                }
+            
+                averageStockRatings.Add(new AverageStockRatings()
+                {
+                    AverageRating = sumOfStockRatings/allStocksRatings.Count,
+                    StockId = stockId
+                });
+            }
+
+            return averageStockRatings;
+
+        }
 
         [HttpPut]
         [Authorize]
