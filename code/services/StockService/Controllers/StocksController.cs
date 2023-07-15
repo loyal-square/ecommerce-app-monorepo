@@ -1,15 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.OpenApi.Any;
-using Newtonsoft.Json;
 using StockService.Database;
 using StockService.Models;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace StockService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/Stock")]
     public class StockController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -27,7 +20,7 @@ namespace StockService.Controllers
         }
 
         [HttpGet]
-        [Route("/byStockIds")]
+        [Route("byStockIds")]
         public async Task<PaginatedResult> GetStocksByStockIds([FromQuery] string[] stockIds, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
         {
             var allStocks = await DbInitializer.context.Stocks.Where(stock => stockIds.Contains(stock.Id.ToString())).ToListAsync();
@@ -37,7 +30,7 @@ namespace StockService.Controllers
         }
 
         [HttpGet]
-        [Route("/byStoreIds")]
+        [Route("byStoreId")]
         public async Task<PaginatedResult> GetStocksByStoreId([FromQuery] int storeId, [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
         {
             var allStocks = await DbInitializer.context.Stocks.Where(stock => storeId.Equals(stock.StoreId)).ToListAsync();
@@ -45,7 +38,7 @@ namespace StockService.Controllers
         }
 
         [HttpGet]
-        [Route("/onsale")]
+        [Route("onsale")]
         public PaginatedResult GetOnSaleStocks([FromQuery] float? minimumPriceMultiplier, [FromQuery] string? stockName, [FromQuery] int? pageNumber, [FromQuery] int? itemsPerPage)
         {
             if(stockName == null)
@@ -81,19 +74,19 @@ namespace StockService.Controllers
 
         [HttpPut]
         [Authorize]
-        [Route("/create")]
+        [Route("create")]
         public async Task<Stock> CreateStock([FromBody] Stock stock)
         {
             stock.Id = 0;
             var newStock = (await DbInitializer.context.Stocks.AddAsync(stock)).Entity;
-            Console.WriteLine(newStock.Id);
             await DbInitializer.context.SaveChangesAsync();
-            return newStock;
+            var newStockForClient = _mapper.Map<Stock>(newStock);
+            return newStockForClient;
         }
 
         [HttpPut]
         [Authorize]
-        [Route("/update/{stockId:int}")]
+        [Route("update/{stockId:int}")]
         public async Task<Stock> UpdateStock([FromBody] Stock stockValues, int stockId)
         {
             var stockToUpdate = await DbInitializer.context.Stocks.FindAsync(stockId);

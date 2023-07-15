@@ -9,5 +9,7 @@ namespace StockService.Database
 
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Image> Images { get; set; }
+        
+        public DbSet<StockRating> StockRatings { get; set; }
     }
 }

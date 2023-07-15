@@ -8,7 +8,7 @@ using StockService.Models;
 namespace StockService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/Image")]
     public class ImagesController : ControllerBase
     {
         [HttpGet]

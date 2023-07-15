@@ -11,7 +11,6 @@
         public int Quantity { get; set; } = 0;
         public int CategoryId { get; set; }
         public int StoreId { get; set; }
-        public List<StockRating> RatingsArray { get; set; } = new List<StockRating>();
         public PriceMultiplier? PriceMultiplier { get; set; } = null;
         public DateTime CreatedDate { get; set; }
         public DateTime? ExpiryDate { get; set; }

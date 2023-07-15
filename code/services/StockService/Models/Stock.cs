@@ -12,7 +12,6 @@ namespace StockService.Models
         public int Quantity { get; set; } = 0;
         public int CategoryId { get; set; }
         public int StoreId { get; set; } = 0;
-        public string? RatingsArrayString { get; set; } = null;
         public string? PriceMultiplierObjString { get; set; } = null;
         public DateTime CreatedDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
