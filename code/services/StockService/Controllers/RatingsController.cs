@@ -28,16 +28,30 @@ namespace StockService.Controllers
         
         [HttpGet]
         [Route("averageByStock")]
-        public async Task<float> GetAverageStockRatingByStock([FromQuery] int stockId)
+        public async Task<AverageStockRatings> GetAverageStockRatingByStock([FromQuery] int stockId)
         {
             var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
-            var sumOfStockRatings = 0f;
-            for (var i = 0; i < allStocksRatings.Count; i++)
+            var sumOfStockRatings = allStocksRatings.Sum(t => t.RatingValue);
+
+            if (allStocksRatings.Count.Equals(0))
             {
-                sumOfStockRatings += allStocksRatings[i].RatingValue;
+                return new AverageStockRatings()
+                {
+                    AverageRating = 0, 
+                    StockId = stockId, 
+                    RatingsCount = 0
+                };
             }
             
-            return sumOfStockRatings/allStocksRatings.Count;
+            return new AverageStockRatings()
+            {
+                AverageRating = sumOfStockRatings / allStocksRatings.Count, 
+                StockId = stockId, 
+                RatingsCount = allStocksRatings.Count
+            };
+          
+            
+           
         }
         
         [HttpGet]
@@ -50,17 +64,26 @@ namespace StockService.Controllers
             {
                 var stockId = stockIds[i];
                 var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
-                var sumOfStockRatings = 0f;
-                for (var j = 0; j < allStocksRatings.Count; j++)
+                var sumOfStockRatings = allStocksRatings.Sum(t => t.RatingValue);
+
+                if (allStocksRatings.Count.Equals(0))
                 {
-                    sumOfStockRatings += allStocksRatings[j].RatingValue;
+                    averageStockRatings.Add(new AverageStockRatings()
+                    {
+                        AverageRating = 0, 
+                        StockId = stockId, 
+                        RatingsCount = 0
+                    });
                 }
-            
-                averageStockRatings.Add(new AverageStockRatings()
+                else
                 {
-                    AverageRating = sumOfStockRatings/allStocksRatings.Count,
-                    StockId = stockId
-                });
+                    averageStockRatings.Add(new AverageStockRatings()
+                    {
+                        AverageRating = sumOfStockRatings/allStocksRatings.Count,
+                        StockId = stockId,
+                        RatingsCount = allStocksRatings.Count
+                    });
+                }
             }
 
             return averageStockRatings;
