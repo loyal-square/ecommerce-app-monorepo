@@ -68,10 +68,21 @@ public class StockServiceController
         var returnObject = await responseMessage.Content.ReadFromJsonAsync<PaginatedResult>();
         return returnObject ?? new PaginatedResult();
     }
-    /*[HttpGet]
+
+    [HttpGet]
     [Route("onsale")]
-    
-    [HttpPut]
+    public async Task<PaginatedResult> GetOnSaleStocks([FromQuery] float? minimumPriceMultiplier,
+        [FromQuery] string? stockName, [FromQuery] int? pageNumber, [FromQuery] int? itemsPerPage,
+        [FromQuery] float? minimumAverageRating)
+    {
+        pageNumber ??= 1;
+        itemsPerPage ??= 10;
+
+        var responseMessage = await _httpClient.GetAsync(_httpClient.BaseAddress + $"/Stock/onsale?minimumPriceMultiplier={minimumPriceMultiplier}&minimumAverageRating={minimumAverageRating}&stockName={stockName}&itemsPerPage={itemsPerPage}&pageNumber={pageNumber}");
+        var returnObject = await responseMessage.Content.ReadFromJsonAsync<PaginatedResult>();
+        return returnObject ?? new PaginatedResult();
+    }
+    /*[HttpPut]
     [Authorize]
     [Route("create")]
     
