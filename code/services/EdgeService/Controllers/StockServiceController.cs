@@ -29,11 +29,33 @@ public class StockServiceController
         var returnObject = await responseMessage.Content.ReadFromJsonAsync<PaginatedResult>();
         return returnObject ?? new PaginatedResult();
     }
-    
-    /*[HttpGet]
-    [Route("stocks/byStockIds")]
-    
+
     [HttpGet]
+    [Route("stocks/byStockIds")]
+    public async Task<PaginatedResult> GetStocksByStockIds([FromQuery] string[] stockIds,
+        [FromQuery] int? pageNumber, [FromQuery] int? itemsPerPage)
+    {
+        pageNumber ??= 1;
+        itemsPerPage ??= 10;
+        var stockIdsQueryString = "";
+        foreach (var stockId in stockIds.Select((value, i) => new { i, value }))
+        {
+            var value = stockId.value;
+            var index = stockId.i;
+            if (index.Equals(0))
+            {
+                stockIdsQueryString += $"stockIds={value}";
+            }
+            else
+            {
+                stockIdsQueryString += $"&stockIds={value}";
+            }
+        }
+        var responseMessage = await _httpClient.GetAsync(_httpClient.BaseAddress + $"/Stock/byStockIds?{stockIdsQueryString}&itemsPerPage={itemsPerPage}&pageNumber={pageNumber}");
+        var returnObject = await responseMessage.Content.ReadFromJsonAsync<PaginatedResult>();
+        return returnObject ?? new PaginatedResult();
+    }
+    /*[HttpGet]
     [Route("stocks/byStoreId")]
     
     [HttpGet]
