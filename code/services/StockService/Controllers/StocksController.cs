@@ -78,7 +78,8 @@ namespace StockService.Controllers
 
             var stocksForClient = _mapper.Map<List<Stock>>(filteredStocksForServer);
 
-            return PaginateResults((dynamic)stocksForClient, (int)itemsPerPage, (int)pageNumber);
+            var stocksWithRatingData = await AppendRatingData(stocksForClient);
+            return PaginateResults((dynamic)stocksWithRatingData, (int)itemsPerPage, (int)pageNumber);
         }
 
         [HttpGet]
@@ -90,7 +91,8 @@ namespace StockService.Controllers
                 .ToListAsync();
 
 
-            return PaginateResults((dynamic)allStocks, itemsPerPage, pageNumber);
+            var stocksWithRatingData = await AppendRatingData(allStocks);
+            return PaginateResults((dynamic)stocksWithRatingData, itemsPerPage, pageNumber);
         }
 
         [HttpGet]
@@ -100,7 +102,8 @@ namespace StockService.Controllers
         {
             var allStocks = await DbInitializer.context.Stocks.Where(stock => storeId.Equals(stock.StoreId))
                 .ToListAsync();
-            return PaginateResults((dynamic)allStocks, itemsPerPage, pageNumber);
+            var stocksWithRatingData = await AppendRatingData(allStocks);
+            return PaginateResults((dynamic)stocksWithRatingData, itemsPerPage, pageNumber);
         }
 
         [HttpGet]
@@ -117,8 +120,8 @@ namespace StockService.Controllers
             var onSaleStocks = _mapper.Map<List<StockForServer>>(DbInitializer.context.Stocks);
 
             onSaleStocks = onSaleStocks
-                .Where(stock => stock.Available == true && stock.Quantity > 0 && stock.ExpiryDate > DateTime.UtcNow &&
-                                stock.Name.Trim().ToLower().Contains(stockName.Trim().ToLower()))
+                .Where(stock => stock is { Available: true, Quantity: > 0 } && stock.ExpiryDate > DateTime.UtcNow &&
+                                (stock.Name?.Trim().ToLower().Contains(stockName.Trim().ToLower()) ?? false))
                 .Where(stock =>
                     stock.PriceMultiplier != null &&
                     stock.PriceMultiplier.DecimalMultiplier <= minimumPriceMultiplier &&
@@ -129,9 +132,17 @@ namespace StockService.Controllers
             Console.WriteLine(onSaleStocks.ToString());
 
             var onSaleStocksOutput = _mapper.Map<List<Stock>>(onSaleStocks);
+            List<StockWithRatingData> returnObject;
             minimumAverageRating ??= 0;
-            onSaleStocksOutput = await FilterByAverageRating(onSaleStocksOutput, (float)minimumAverageRating);
-            return PaginateResults((dynamic)onSaleStocksOutput, (int)itemsPerPage, (int)pageNumber);
+            if (minimumAverageRating > 0)
+            {
+                returnObject = await FilterByAverageRating(onSaleStocksOutput, (float)minimumAverageRating);
+            }
+            else
+            {
+                returnObject = await AppendRatingData(onSaleStocksOutput);
+            }
+            return PaginateResults((dynamic)returnObject, (int)itemsPerPage, (int)pageNumber);
         }
 
         [HttpPut]
@@ -152,7 +163,14 @@ namespace StockService.Controllers
         public async Task<Stock> UpdateStock([FromBody] Stock stockValues, int stockId)
         {
             var stockToUpdate = await DbInitializer.context.Stocks.FindAsync(stockId);
-            DbInitializer.context.Stocks.Remove(stockToUpdate);
+            if (stockToUpdate != null)
+            {
+                DbInitializer.context.Stocks.Remove(stockToUpdate);
+            }
+            else
+            {
+                throw new Exception("Stock to update could not be found");
+            }
             await DbInitializer.context.SaveChangesAsync();
             stockValues.Id = stockId;
             var updatedStock = await DbInitializer.context.Stocks.AddAsync(stockValues);
@@ -213,21 +231,72 @@ namespace StockService.Controllers
             return new PaginatedResult()
             {
                 PaginatedItems = paginatedItems,
-                TotalItems = unpaginatedItems?.Count ?? 0,
-                TotalPages = (int)Math.Ceiling((unpaginatedItems?.Count ?? 0) / (float)itemsPerPage)
+                TotalItems = unpaginatedItems.Count ?? 0,
+                TotalPages = (int)Math.Ceiling((unpaginatedItems.Count ?? 0) / (float)itemsPerPage)
             };
         }
 
-        private async Task<List<Stock>> FilterByAverageRating(List<Stock> allStocks, float minimumAverageRating)
+        private static StockWithRatingData MapRatingData(Stock stock, float averageRating, int numberOfRatings)
         {
-            var stockRatings = await DbInitializer.context.StockRatings
-                .Where(rating => rating.RatingValue >= minimumAverageRating).ToListAsync();
-            var matchingStocks = new List<Stock>();
-            for (var i = 0; i < stockRatings.Count; i++)
+            return new StockWithRatingData()
             {
-                var stockRating = stockRatings[i];
-                var matchingStock = allStocks.Find(stock => stock.Id.Equals(stockRating.StockId));
-                if (matchingStock != null) matchingStocks.Add(matchingStock);
+                Id = stock.Id,
+                Name = stock.Name,
+                Price = stock.Price,
+                Currency = stock.Currency,
+                Description = stock.Description,
+                Details = stock.Details,
+                Available = stock.Available,
+                Quantity = stock.Quantity,
+                CategoryId = stock.CategoryId,
+                StoreId = stock.StoreId,
+                PriceMultiplierObjString = stock.PriceMultiplierObjString,
+                CreatedDate = stock.CreatedDate,
+                ExpiryDate = stock.ExpiryDate,
+                AverageRating = averageRating,
+                NumberOfRatings = numberOfRatings
+            };
+        }
+        private static async Task<List<StockWithRatingData>> AppendRatingData(List<Stock> allStocks)
+        {
+            var matchingStocks = new List<StockWithRatingData>();
+            foreach (var stock in allStocks)
+            {
+                var stockRatings = await DbInitializer.context.StockRatings.Where(x => x.StockId.Equals(stock.Id)).ToListAsync();
+                if (stockRatings.Count <= 0)
+                {
+                    var stockWithRatingData = MapRatingData(stock, 0, 0);
+                    
+                    matchingStocks.Add(stockWithRatingData);
+                }
+                else
+                {
+                    var averageStockRating = stockRatings.Average(x => x.RatingValue);
+                    var stockWithRatingData = MapRatingData(stock, averageStockRating, stockRatings.Count);
+                    
+                    matchingStocks.Add(stockWithRatingData);
+                }
+                
+              
+            }
+
+            return matchingStocks;
+        }
+        
+        private static async Task<List<StockWithRatingData>> FilterByAverageRating(List<Stock> allStocks, float minimumAverageRating)
+        {
+            var matchingStocks = new List<StockWithRatingData>();
+            foreach (var stock in allStocks)
+            {
+                var stockRatings = await DbInitializer.context.StockRatings.Where(x => x.StockId.Equals(stock.Id)).ToListAsync();
+                if (stockRatings.Count <= 0) continue;
+                var averageStockRating = stockRatings.Average(x => x.RatingValue);
+                if (averageStockRating >= minimumAverageRating)
+                {
+                    var stockWithRatingData = MapRatingData(stock, averageStockRating, stockRatings.Count);
+                        
+                    matchingStocks.Add(stockWithRatingData);
+                }
             }
 
             return matchingStocks;
