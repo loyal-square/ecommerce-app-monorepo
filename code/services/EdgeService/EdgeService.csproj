@@ -13,6 +13,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CommonMicroserviceSupport\CommonMicroserviceSupport.csproj" />
+      <ProjectReference Include="..\ProfileService\ProfileService.csproj" />
+      <ProjectReference Include="..\StockService\StockService.csproj" />
     </ItemGroup>
 
 </Project>
