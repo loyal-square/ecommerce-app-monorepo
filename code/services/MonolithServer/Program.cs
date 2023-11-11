@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using StockService.Database;
+using MonolithServer.Database;
 
-namespace StockService
+namespace MonolithServer
 {
     public class Program
     {
@@ -48,7 +48,7 @@ namespace StockService
                 });
             });
             builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
-                  options.UseNpgsql(builder.Configuration.GetConnectionString("DbContext")));
+                  options.UseNpgsql(Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString" : builder.Configuration.GetConnectionString("DbContext")));
             
             builder.Services.AddCognitoIdentity();
             builder.Services.AddAuthorization();
