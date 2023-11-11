@@ -21,6 +21,7 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
     <Target Name="PrePublishTarget" AfterTargets="Publish">
+        <Exec Command="dotnet tool restore" />
         <Exec Command="dotnet ef database update" />
     </Target>
 </Project>
