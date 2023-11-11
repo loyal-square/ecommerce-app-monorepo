@@ -43,6 +43,7 @@ namespace MonolithServer
                                 Id = "Bearer"
                             }
                         },
+                        
                         new string[] {}
                     }
                 });
