@@ -13,12 +13,9 @@ namespace EdgeService
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureKestrel(serverOptions =>
-                    {
-                        serverOptions.Listen(IPAddress.Any,
-                            Convert.ToInt32(Environment.GetEnvironmentVariable("PORT")));
-                    }).UseStartup<Startup>();
-                }).ConfigureAppConfiguration((_, configuration) =>
+                    webBuilder.UseStartup<Startup>();
+                    
+                }).ConfigureAppConfiguration((hostingContext, configuration) =>
                 {
                     if (Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false)
                     {

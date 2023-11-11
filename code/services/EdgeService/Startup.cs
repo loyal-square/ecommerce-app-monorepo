@@ -1,11 +1,17 @@
-﻿using EdgeService.Managers;
-using EdgeService.Managers.Interfaces;
+﻿using EdgeService.Api.implementations;
+using EdgeService.Api.interfaces;
 using Microsoft.OpenApi.Models;
 
 namespace EdgeService
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
         private const string MyAllowedSpecificOrigins = "_myAllowSpecificOrigins";
         public void ConfigureServices(IServiceCollection services)
         {
@@ -27,7 +33,11 @@ namespace EdgeService
             services.AddLogging(builder => builder.AddConsole());
             
             //Inject Managers
-            services.AddSingleton<IWeatherForcastManager, WeatherForecastManager>();
+            
+            //Inject internal service APIs
+            services.AddSingleton<IStockServiceApi>(new StockServiceApi(new Logger<StockServiceApi>(new LoggerFactory())));
+
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,17 +53,20 @@ namespace EdgeService
             {
                 // Configure error handling for the production environment here
             }
-
+            
             app.UseRouting();
             // global cors policy
             app.UseCors(MyAllowedSpecificOrigins);
-
+            
             // Add middleware and routing configuration here
-
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }

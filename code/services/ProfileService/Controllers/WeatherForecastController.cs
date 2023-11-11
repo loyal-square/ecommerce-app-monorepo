@@ -1,15 +1,26 @@
-﻿using EdgeService.Managers.Interfaces;
+using CommonMicroserviceSupport.Models;
+using Microsoft.AspNetCore.Mvc;
 
-namespace EdgeService.Managers;
+namespace ProfileService.Controllers;
 
-public class WeatherForecastManager: IWeatherForcastManager
+[ApiController]
+[Route("api/[controller]")]
+public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
     {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    public List<WeatherForecast> Get()
+    private readonly ILogger<WeatherForecastController> _logger;
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    {
+        _logger = logger;
+    }
+
+    [HttpGet(Name = "GetWeatherForecast")]
+    public IEnumerable<WeatherForecast> Get()
     {
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

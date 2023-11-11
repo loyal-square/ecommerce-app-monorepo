@@ -1,4 +1,4 @@
-namespace EdgeService;
+﻿namespace CommonMicroserviceSupport.Models;
 
 public class WeatherForecast
 {
