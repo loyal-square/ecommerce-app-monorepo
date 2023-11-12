@@ -12,8 +12,17 @@ namespace MonolithServer
         public static void Main(string[] args)
         {
 
+            var loggerFactory = LoggerFactory.Create(
+                builder => builder
+                    // add console as logging target
+                    .AddConsole()
+                    // add debug output as logging target
+                    .AddDebug()
+                    // set minimum level to log
+                    .SetMinimumLevel(LogLevel.Debug));
+            var logger = loggerFactory.CreateLogger<Program>();
+            
             var builder = WebApplication.CreateBuilder(args);
-
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -48,8 +57,15 @@ namespace MonolithServer
                     }
                 });
             });
+
+            var initString = Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false
+                ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString"
+                : builder.Configuration.GetConnectionString("DbContext");
+            
+            logger.LogInformation(initString);
+
             builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
-                  options.UseNpgsql(Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString" : builder.Configuration.GetConnectionString("DbContext")));
+                options.UseNpgsql(initString));
             
             builder.Services.AddCognitoIdentity();
             builder.Services.AddAuthorization();
@@ -72,7 +88,6 @@ namespace MonolithServer
             var app = builder.Build();
             using var scope = app.Services.CreateScope();
             var ctx = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
-            var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
             try
             {
