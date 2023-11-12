@@ -58,9 +58,10 @@ namespace MonolithServer
                 });
             });
 
-            var initString = Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false
-                ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString"
-                : builder.Configuration.GetConnectionString("DbContext");
+            var initString = "jdbc:" +
+                             (Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false
+                                 ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString"
+                                 : builder.Configuration.GetConnectionString("DbContext"));
             
             logger.LogInformation(initString);
 
