@@ -1,13 +1,13 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using MonolithServer.Database;
 using MonolithServer.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace StockService.Controllers
+namespace MonolithServer.Controllers
 {
     [ApiController]
     [Route("api/Stock")]
