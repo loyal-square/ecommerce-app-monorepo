@@ -60,7 +60,7 @@ namespace MonolithServer
 
             var initString = (Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false
                                  ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString"
-                                 : builder.Configuration.GetConnectionString("DbContext")) + ";sslmode=Prefer;Trust Server Certificate=true";
+                                 : builder.Configuration.GetConnectionString("DbContext")) + "; sslmode=Prefer; Trust Server Certificate=true";
             
             logger.LogInformation(initString);
 
