@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MonolithServer.Database;
+using Npgsql;
 
 namespace MonolithServer
 {
@@ -60,12 +61,38 @@ namespace MonolithServer
 
             var initString = (Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false
                                  ? Environment.GetEnvironmentVariable("DATABASE_URL") ?? "invalidString"
-                                 : builder.Configuration.GetConnectionString("DbContext")) + " SSLMode=Require Trust Server Certificate=true";
-            
-            logger.LogInformation(initString);
+                                 : builder.Configuration.GetConnectionString("DbContext"));
 
-            builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
-                options.UseNpgsql(initString));
+            if (Environment.GetEnvironmentVariable("environment")?.Equals("heroku-prod") ?? false)
+            {
+                var databaseUrl = initString;
+                var databaseUri = new Uri(databaseUrl);
+                var userInfo = databaseUri.UserInfo.Split(':');
+
+                var sqlBuilder = new NpgsqlConnectionStringBuilder
+                {
+                    Host = databaseUri.Host,
+                    Port = databaseUri.Port,
+                    Username = userInfo[0],
+                    Password = userInfo[1],
+                    Database = databaseUri.LocalPath.TrimStart('/'),
+                    SslMode = SslMode.Require, // Adjust based on your security requirements,
+                    TrustServerCertificate = true
+                };
+
+                var connectionString = sqlBuilder.ToString();
+            
+                logger.LogInformation(connectionString);
+
+                builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
+                    options.UseNpgsql(connectionString));
+            }
+            else
+            {
+                builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApiDbContext>(options =>
+                    options.UseNpgsql(initString));
+            }
+            
             
             builder.Services.AddCognitoIdentity();
             builder.Services.AddAuthorization();
