@@ -9,18 +9,27 @@ import { ThemeStructure } from './services/themes/theme.types';
 export class AppComponent implements OnInit {
   title = 'loyalSquare';
   classes: Classes<keyof ThemeStructure> | undefined;
-  constructor(private themeService: ThemeService){}
+  constructor(private themeService: ThemeService) {}
   public ngOnInit(): void {
     this.themeService.init();
     this.extractClassesFromThemeService();
   }
-  private extractClassesFromThemeService(){
+  private extractClassesFromThemeService() {
     this.classes = this.themeService.themeClasses;
   }
-  public toggleTheme(){
+  public toggleTheme() {
     this.themeService.toggleLightDarkTheme();
     this.extractClassesFromThemeService();
     console.log(this.classes);
-    
+  }
+  public overrideTheme() {
+    this.themeService.overrideLoyalSquareTheme({
+      name: 'pbtech',
+      colors: {
+        primary1: 'blue',
+        secondary1: 'white',
+        tertiary1: 'black',
+      },
+    });
   }
 }

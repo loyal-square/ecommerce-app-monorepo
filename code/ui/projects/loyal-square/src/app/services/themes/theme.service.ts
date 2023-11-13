@@ -64,15 +64,7 @@ export class ThemeService {
 
   public overrideLoyalSquareTheme(customTheme: ThemeColors) {
     this.currentTheme = customTheme;
-
-    this.changeColorTheme();
-
-    if (this.themeClasses) {
-      const sheet = jss
-        .createStyleSheet(this.themeClasses, { link: true })
-        .attach();
-      this.themeClasses = sheet.classes;
-    }
+    this.sheet?.update(this.currentTheme);
   }
 }
 
