@@ -22,7 +22,7 @@
               "projects/loyal-square/src/favicon.ico",
               "projects/loyal-square/src/assets"
             ],
-            "styles": [],
+            "styles": ["projects/loyal-square/src/index.css"],
             "scripts": []
           },
           "configurations": {
@@ -79,7 +79,7 @@
               "projects/loyal-square/src/favicon.ico",
               "projects/loyal-square/src/assets"
             ],
-            "styles": [],
+            "styles": ["projects/loyal-square/src/index.css"],
             "scripts": []
           }
         }
