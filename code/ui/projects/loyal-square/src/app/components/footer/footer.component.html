@@ -1,0 +1,76 @@
+<div [ngClass]="[classes?.baseColors, 'footer-wrapper']">
+  <div [ngClass]="[classes?.baseColorsInverted, 'footer-subscribe']">
+    <h2 [ngClass]="['subscribe-text']">
+      <a
+        routerLink="/subscribe-mail"
+        [ngClass]="['link', classes?.linkStylesInverted]"
+        >SUBSCRIBE</a
+      >
+      TO OUR MAILING LIST FOR THE LATEST DEALS!
+    </h2>
+  </div>
+  <div [ngClass]="['footer-inner-wrapper']">
+    <div [ngClass]="[classes?.baseOverlay, 'footer-overlay']">
+      <div [ngClass]="[classes?.baseColorsInverted, 'footer-credits']">
+        <p>
+          Made by <strong>Amy Lyu</strong> and <strong>Christopher Alba</strong>
+        </p>
+      </div>
+      <div
+        [ngClass]="[classes?.baseBackgroundTertiary, 'footer-content-wrapper']"
+      >
+        <div [ngClass]="[classes?.baseColors, 'footer-content']">
+          <div class="footer-content-inner-wrapper">
+            <div [ngClass]="['footer-content-inner']">
+              <h1>Extra Links</h1>
+              <a
+                routerLink="/careers"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >Careers</a
+              >
+              <a
+                routerLink="/about"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >About Us</a
+              >
+              <a
+                routerLink="/help"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >Help</a
+              >
+              <a
+                routerLink="/announcements"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >Announcements</a
+              >
+            </div>
+            <div [ngClass]="['footer-content-inner']">
+              <h1>Contact</h1>
+              <a
+                href="https://www.google.com"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >Facebook</a
+              >
+              <a
+                href="https://www.google.com"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >Instagram</a
+              >
+              <a
+                href="mailto:loyalsquare.nz@gmail.com"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >loyalsquare.nz&#64;gmail.com</a
+              >
+              <a
+                href="https://www.google.com"
+                [ngClass]="['link', classes?.linkStyles, 'footer-link']"
+                >Github</a
+              >
+            </div>
+          </div>
+          <h4 class="footer-company-logo">Loyal Square Limited 2023</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
