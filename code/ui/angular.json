@@ -16,17 +16,13 @@
             "outputPath": "dist/loyal-square",
             "index": "projects/loyal-square/src/index.html",
             "main": "projects/loyal-square/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/loyal-square/tsconfig.app.json",
             "assets": [
               "projects/loyal-square/src/favicon.ico",
               "projects/loyal-square/src/assets"
             ],
-            "styles": [
-              "projects/loyal-square/src/styles.css"
-            ],
+            "styles": ["projects/loyal-square/src/index.css"],
             "scripts": []
           },
           "configurations": {
@@ -77,18 +73,13 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/loyal-square/tsconfig.spec.json",
             "assets": [
               "projects/loyal-square/src/favicon.ico",
               "projects/loyal-square/src/assets"
             ],
-            "styles": [
-              "projects/loyal-square/src/styles.css"
-            ],
+            "styles": ["projects/loyal-square/src/index.css"],
             "scripts": []
           }
         }
@@ -119,10 +110,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/ngx-lib/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
