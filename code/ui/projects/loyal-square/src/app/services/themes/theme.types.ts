@@ -43,9 +43,38 @@ export type ThemeStructure = {
     fontWeight: number | string;
   };
   base: {
-    backgroundColor: (data: ThemeColors) => string;
+    background: (data: ThemeColors) => string;
     color: (data: ThemeColors) => string;
     height: (data: ThemeColors) => string;
     display: (data: ThemeColors) => string;
+  };
+  baseColors: {
+    background: (data: ThemeColors) => string;
+    color: (data: ThemeColors) => string;
+  };
+  baseOverlay: {
+    background: (data: ThemeColors) => string;
+  },
+  baseOverlayInverted: {
+    background: (data: ThemeColors) => string;
+  },
+  baseColorsInverted: {
+    background: (data: ThemeColors) => string;
+    color: (data: ThemeColors) => string;
+  };
+  baseBackgroundTertiary: {
+    background: (data: ThemeColors) => string;
+  };
+  linkStyles: {
+    color: (data: ThemeColors) => string;
+    '&:hover': {
+      color: (data: ThemeColors) => string;
+    };
+  };
+  linkStylesInverted: {
+    color: (data: ThemeColors) => string;
+    '&:hover': {
+      color: (data: ThemeColors) => string;
+    };
   };
 };

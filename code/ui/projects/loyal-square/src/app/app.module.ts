@@ -8,11 +8,12 @@ import { NgxLibModule } from 'ngx-lib';
 import jss from 'jss';
 import jssPresetDefault from 'jss-preset-default';
 import jssDynamic from 'jss-plugin-rule-value-function';
+import { FooterComponent } from "./components/footer/footer.component"
 jss.setup(jssPresetDefault());
 jss.use(jssDynamic());
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, FooterComponent],
   imports: [BrowserModule, AppRoutingModule, NgxLibModule],
   providers: [],
   bootstrap: [AppComponent],
