@@ -13,7 +13,7 @@ export class ThemeService {
 
   public init(): void {
     this.currentTheme = JSON.parse(
-      localStorage.getItem('theme') ?? JSON.stringify(loyalsquareDark)
+      localStorage.getItem('theme') ?? JSON.stringify(loyalsquareLight)
     );
     this.changeColorTheme();
     if (this.loyalsquareStyles) {
@@ -40,10 +40,39 @@ export class ThemeService {
         fontFamily: 'Arial, sans-serif',
       },
       base: {
-        backgroundColor: (data) => data.colors.primary1 ?? 'white',
+        background: (data) => data.colors.primary1 ?? 'white',
         color: (data) => data.colors.secondary1 ?? 'black',
         height: (data) => '100vh',
         display: (data) => 'block',
+      },
+      baseColors: {
+        background: (data) => data.colors.primary1 ?? 'white',
+        color: (data) => data.colors.secondary1 ?? 'black',
+      },
+      baseOverlay: {
+        background: (data) => data.colors.primary1Transparent ?? 'rgba(255,255,255,0.9)'
+      },
+      baseOverlayInverted: {
+        background: (data) => data.colors.secondary1Transparent ?? 'rgba(0,0,0,0.9)'
+      },
+      baseBackgroundTertiary: {
+        background: (data) => data.colors.tertiary1 ?? 'white',
+      },
+      baseColorsInverted: {
+        background: (data) => data.colors.secondary1 ?? 'black',
+        color: (data) => data.colors.primary1 ?? 'white',
+      },
+      linkStyles: {
+        color: (data) => data.colors.secondary1 ?? 'black',
+        '&:hover': {
+          color: (data) => data.colors.tertiary1 ?? 'blue',
+        },
+      },
+      linkStylesInverted: {
+        color: (data) => data.colors.primary1 ?? 'white',
+        '&:hover': {
+          color: (data) => data.colors.tertiary1 ?? 'blue',
+        },
       },
     };
     if (this.sheet) {
