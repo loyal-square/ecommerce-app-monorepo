@@ -106,7 +106,11 @@ export class ThemeService {
       overrideDark.colors.tertiary1 = uniqueColor;
       overrideLight.colors.tertiary1 = uniqueColor;
     }
-    this.currentTheme = overrideLight;
+    if (this.currentTheme?.name.includes('light')) {
+      this.currentTheme = overrideLight;
+    } else {
+      this.currentTheme = overrideDark;
+    }
     this.sheet?.update(this.currentTheme);
   }
 }
