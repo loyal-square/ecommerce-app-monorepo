@@ -7,9 +7,11 @@ namespace MonolithServer.Database
     {
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options) { }
 
-        public DbSet<Stock> Stocks { get; set; }
-        public DbSet<Image> Images { get; set; }
-        
-        public DbSet<StockRating> StockRatings { get; set; }
+        public DbSet<Stock>? Stocks { get; set; }
+        public DbSet<Image>? Images { get; set; }
+        public DbSet<StockRating>? StockRatings { get; set; }
+        public DbSet<Store>? Stores { get; set; }
+        public DbSet<Profile>? Profiles { get; set; }
+        public DbSet<Order>? Orders { get; set; }
     }
 }
