@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MonolithServer.Database;
+using MonolithServer.Managers.Implementations;
+using MonolithServer.Managers.Interfaces;
 using Npgsql;
 
 namespace MonolithServer
@@ -38,6 +40,9 @@ namespace MonolithServer
             
             
             builder.Services.AddControllers();
+
+            builder.Services.AddScoped<IStockManager, StockManager>();
+            
             builder.Services.AddLogging();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -128,7 +133,7 @@ namespace MonolithServer
             var ctx = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
             try
             {
-                DbInitializer.Initialize(ctx);
+                ctx.Database.Migrate();
             }
             catch (Exception ex)
             {

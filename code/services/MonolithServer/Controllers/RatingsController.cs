@@ -11,11 +11,16 @@ namespace MonolithServer.Controllers
     [Route("api/Rating")]
     public class RatingsController : ControllerBase
     {
-        [HttpGet]
+        private readonly ApiDbContext _context;
+        public RatingsController(ApiDbContext apiDbContext)
+        {
+            _context = apiDbContext;
+        }
+    [HttpGet]
         [Route("StockIds")]
         public async Task<List<StockRating>> GetStockRatingsByStockIds([FromQuery] string[] stockIds)
         {
-            var allStockRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockIds.Contains(stockRating.StockId.ToString())).ToListAsync();
+            var allStockRatings = await _context.StockRatings.Where(stockRating => stockIds.Contains(stockRating.StockId.ToString())).ToListAsync();
             return allStockRatings;
         }
 
@@ -23,7 +28,7 @@ namespace MonolithServer.Controllers
         [Route("StoreId")]
         public async Task<List<StockRating>> GetStockRatingsByStoreId([FromQuery] int storeId)
         {
-            var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => storeId.Equals(stockRating.StoreId)).ToListAsync();
+            var allStocksRatings = await _context.StockRatings.Where(stockRating => storeId.Equals(stockRating.StoreId)).ToListAsync();
             return allStocksRatings;
         }
         
@@ -31,7 +36,7 @@ namespace MonolithServer.Controllers
         [Route("averageByStock")]
         public async Task<AverageStockRatings> GetAverageStockRatingByStock([FromQuery] int stockId)
         {
-            var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
+            var allStocksRatings = await _context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
             var sumOfStockRatings = allStocksRatings.Sum(t => t.RatingValue);
 
             if (allStocksRatings.Count.Equals(0))
@@ -64,7 +69,7 @@ namespace MonolithServer.Controllers
             for (var i = 0; i < stockIds.Length; i++)
             {
                 var stockId = stockIds[i];
-                var allStocksRatings = await DbInitializer.context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
+                var allStocksRatings = await _context.StockRatings.Where(stockRating => stockId.Equals(stockRating.StockId)).ToListAsync();
                 var sumOfStockRatings = allStocksRatings.Sum(t => t.RatingValue);
 
                 if (allStocksRatings.Count.Equals(0))
@@ -96,21 +101,21 @@ namespace MonolithServer.Controllers
         [Route("create")]
         public async Task<StockRating?> CreateStockRating([FromBody] StockRating stockRating)
         {
-            if (await AuthHelpers.AccessingRestrictedRatingsData(User, stockRating))
+            if (await AuthHelpers.AccessingRestrictedRatingsData(User, stockRating, _context))
             {
                 throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
             }
             
             //Find if stockRating userId matches any existing for the related stock. If it does, prevent creation of a new rating.
-            var allStockRatings = await DbInitializer.context.StockRatings.ToListAsync();
+            var allStockRatings = await _context.StockRatings.ToListAsync();
             var matchingStockRating = allStockRatings.Find(s => s.StockId.Equals(stockRating.StockId) && s.UserId.Equals(stockRating.UserId));
             if (matchingStockRating != null)
             {
                 throw new Exception("You cannot create a new rating for a stock you have already rated before. You can however edit your existing rating.");
             }
 
-            var newStockRating = DbInitializer.context.StockRatings.Add(stockRating).Entity;
-            await DbInitializer.context.SaveChangesAsync();
+            var newStockRating = _context.StockRatings.Add(stockRating).Entity;
+            await _context.SaveChangesAsync();
             return newStockRating;
         }
 
@@ -120,15 +125,15 @@ namespace MonolithServer.Controllers
         public async Task DeleteStockRatingById(int stockRatingId)
         {
             var user = User;
-            var stockRatingToDelete = await DbInitializer.context.StockRatings.FindAsync(stockRatingId);
-            if (await AuthHelpers.AccessingRestrictedRatingsData(user, stockRatingToDelete))
+            var stockRatingToDelete = await _context.StockRatings.FindAsync(stockRatingId);
+            if (await AuthHelpers.AccessingRestrictedRatingsData(user, stockRatingToDelete, _context))
             {
                 throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
             }
             
             if (stockRatingToDelete == null) return;
-            DbInitializer.context.StockRatings.Remove(stockRatingToDelete);
-            await DbInitializer.context.SaveChangesAsync();
+            _context.StockRatings.Remove(stockRatingToDelete);
+            await _context.SaveChangesAsync();
         }
         
         [HttpDelete]
@@ -136,15 +141,15 @@ namespace MonolithServer.Controllers
         [Route("StoreId/{storeId:int}")]
         public async Task DeleteStockRatingByStoreId(int storeId)
         {
-            if (await AuthHelpers.AccessingRestrictedRatingsDataByStoreId(User, storeId))
+            if (await AuthHelpers.AccessingRestrictedDataByStoreId(User, storeId, _context))
             {
                 throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
             }
             
-            var stockRatingsToDelete = await DbInitializer.context.StockRatings.Where(rating => rating.StoreId.Equals(storeId)).ToListAsync();
+            var stockRatingsToDelete = await _context.StockRatings.Where(rating => rating.StoreId.Equals(storeId)).ToListAsync();
             if (stockRatingsToDelete.Count == 0) return;
-            DbInitializer.context.StockRatings.RemoveRange(stockRatingsToDelete);
-            await DbInitializer.context.SaveChangesAsync();
+            _context.StockRatings.RemoveRange(stockRatingsToDelete);
+            await _context.SaveChangesAsync();
         }
     }
 }

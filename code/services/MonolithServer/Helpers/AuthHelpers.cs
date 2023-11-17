@@ -9,7 +9,7 @@ namespace MonolithServer.Helpers;
 
 public class AuthHelpers
 {
-    public static async Task<bool> AccessingRestrictedStockData(ClaimsPrincipal? userToken, Stock stock)
+    public static async Task<bool> AccessingRestrictedStockData(ClaimsPrincipal? userToken, Stock stock, ApiDbContext context)
     {
         if (userToken == null)
         {
@@ -19,7 +19,7 @@ public class AuthHelpers
         
         //get the profile that matches the store id in stock
         var storeId = stock.StoreId;
-        var allprofiles = await DbInitializer.context.Profiles.ToListAsync();
+        var allprofiles = await context.Profiles.ToListAsync();
         var matchingProfiles = allprofiles.Select(profile => new ProfileKeyInfo()
         {
             StoreIdArray = JsonConvert.DeserializeObject<List<int>>(profile.StoreIdArrayString),
@@ -29,7 +29,7 @@ public class AuthHelpers
         return !matchingProfiles.Contains(userToken.FindFirst("username").Value);
     }
 
-    public static async Task<bool> AccessingRestrictedRatingsData(ClaimsPrincipal? userToken, StockRating stockRating)
+    public static async Task<bool> AccessingRestrictedRatingsData(ClaimsPrincipal? userToken, StockRating stockRating, ApiDbContext context)
     {
         if (userToken == null)
         {
@@ -37,13 +37,13 @@ public class AuthHelpers
             return true;
         }
 
-        var user = await DbInitializer.context.Profiles.FindAsync(stockRating.UserId);
+        var user = await context.Profiles.FindAsync(stockRating.UserId);
         return !user?.Username.Equals(userToken.FindFirst("username").Value) ?? true;
     }
 
-    public static async Task<bool> AccessingRestrictedRatingsDataByStoreId(ClaimsPrincipal? userToken, int storeId)
+    public static async Task<bool> AccessingRestrictedDataByStoreId(ClaimsPrincipal? userToken, int storeId, ApiDbContext context)
     {
-        var profiles = await DbInitializer.context.Profiles.ToListAsync();
+        var profiles = await context.Profiles.ToListAsync();
         var matchingProfiles = profiles.Select(profile => new ProfileKeyInfo()
         {
             StoreIdArray = JsonConvert.DeserializeObject<List<int>>(profile.StoreIdArrayString),
