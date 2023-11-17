@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MonolithServer.Database;
+using MonolithServer.Helpers;
 using MonolithServer.Models;
 
 namespace MonolithServer.Controllers
@@ -95,6 +96,11 @@ namespace MonolithServer.Controllers
         [Route("create")]
         public async Task<StockRating?> CreateStockRating([FromBody] StockRating stockRating)
         {
+            if (await AuthHelpers.AccessingRestrictedRatingsData(User, stockRating))
+            {
+                throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
+            }
+            
             //Find if stockRating userId matches any existing for the related stock. If it does, prevent creation of a new rating.
             var allStockRatings = await DbInitializer.context.StockRatings.ToListAsync();
             var matchingStockRating = allStockRatings.Find(s => s.StockId.Equals(stockRating.StockId) && s.UserId.Equals(stockRating.UserId));
@@ -111,9 +117,15 @@ namespace MonolithServer.Controllers
         [HttpDelete]
         [Authorize]
         [Route("stockRatingId/{stockRatingId:int}")]
-        public async void DeleteStockRatingById(int stockRatingId)
+        public async Task DeleteStockRatingById(int stockRatingId)
         {
+            var user = User;
             var stockRatingToDelete = await DbInitializer.context.StockRatings.FindAsync(stockRatingId);
+            if (await AuthHelpers.AccessingRestrictedRatingsData(user, stockRatingToDelete))
+            {
+                throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
+            }
+            
             if (stockRatingToDelete == null) return;
             DbInitializer.context.StockRatings.Remove(stockRatingToDelete);
             await DbInitializer.context.SaveChangesAsync();
@@ -121,9 +133,14 @@ namespace MonolithServer.Controllers
         
         [HttpDelete]
         [Authorize]
-        [Route("StoreId/{StoreId:int}")]
-        public async void DeleteStockRatingByStoreId(int storeId)
+        [Route("StoreId/{storeId:int}")]
+        public async Task DeleteStockRatingByStoreId(int storeId)
         {
+            if (await AuthHelpers.AccessingRestrictedRatingsDataByStoreId(User, storeId))
+            {
+                throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
+            }
+            
             var stockRatingsToDelete = await DbInitializer.context.StockRatings.Where(rating => rating.StoreId.Equals(storeId)).ToListAsync();
             if (stockRatingsToDelete.Count == 0) return;
             DbInitializer.context.StockRatings.RemoveRange(stockRatingsToDelete);

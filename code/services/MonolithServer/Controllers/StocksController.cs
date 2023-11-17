@@ -138,7 +138,7 @@ public class StockController : ControllerBase
     public async Task<Stock> CreateStock([FromBody] Stock stock)
     {
         //compare the username in the jwt to the usernames in the store the stock is from
-        if (await AuthHelpers.AccessingRestrictedData(User, stock))
+        if (await AuthHelpers.AccessingRestrictedStockData(User, stock))
         {
             throw new UnauthorizedAccessException("Attempted to access restricted resources. This is forbidden.");
         }
@@ -158,7 +158,7 @@ public class StockController : ControllerBase
     [Route("update/{stockId:int}")]
     public async Task<Stock> UpdateStock([FromBody] Stock stockValues, int stockId)
     {
-        if (await AuthHelpers.AccessingRestrictedData(User, stockValues))
+        if (await AuthHelpers.AccessingRestrictedStockData(User, stockValues))
         {
             throw new UnauthorizedAccessException("Attempted to access restricted resources. This is forbidden.");
         }
@@ -185,7 +185,7 @@ public class StockController : ControllerBase
         
         if (stock != null)
         {
-            if (await AuthHelpers.AccessingRestrictedData(user, stock))
+            if (await AuthHelpers.AccessingRestrictedStockData(user, stock))
             {
                 throw new UnauthorizedAccessException("Attempted to access restricted resources. This is forbidden.");
             }
