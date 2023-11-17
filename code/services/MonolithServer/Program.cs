@@ -25,9 +25,20 @@ namespace MonolithServer
             
             var builder = WebApplication.CreateBuilder(args);
             // Add services to the container.
+            const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: myAllowSpecificOrigins,
+                    policy  =>
+                    {
+                        policy.WithOrigins("*");
+                    });
+            });
             builder.Services.AddAutoMapper(typeof(MappingProfile));
-
+            
+            
             builder.Services.AddControllers();
+            builder.Services.AddLogging();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -115,7 +126,6 @@ namespace MonolithServer
             var app = builder.Build();
             using var scope = app.Services.CreateScope();
             var ctx = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
-
             try
             {
                 DbInitializer.Initialize(ctx);
@@ -133,6 +143,13 @@ namespace MonolithServer
                 app.UseSwaggerUI();
             }
 
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); 
+            
             app.UseHttpsRedirection();
             
             app.UseAuthentication();
