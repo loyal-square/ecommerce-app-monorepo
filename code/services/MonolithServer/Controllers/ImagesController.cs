@@ -11,19 +11,24 @@ namespace MonolithServer.Controllers
     [Route("api/Image")]
     public class ImagesController : ControllerBase
     {
+        private readonly ApiDbContext _context;
+        public ImagesController(ApiDbContext apiDbContext)
+        {
+            _context = apiDbContext;
+        }
         [HttpGet]
         public async Task<List<Image>> GetImages([FromQuery] int[] stockIds)
         {
             //Call database method here to return a list of Image typed objects
-            return await DbInitializer.context.Images.Where(image => stockIds.Contains(image.StockId)).ToListAsync();
+            return await _context.Images.Where(image => stockIds.Contains(image.StockId)).ToListAsync();
         }
 
         [HttpPut]
         public async Task<Image> CreateImage([FromBody] Image image)
         {
             image.Id = 0;
-            var newImage = (await DbInitializer.context.Images.AddAsync(image)).Entity;
-            await DbInitializer.context.SaveChangesAsync();
+            var newImage = (await _context.Images.AddAsync(image)).Entity;
+            await _context.SaveChangesAsync();
             
             return newImage;
         }
@@ -32,16 +37,16 @@ namespace MonolithServer.Controllers
         [Route("imageId/{imageId:int}")]
         public async void DeleteByImageId(int imageId)
         {
-            DbInitializer.context.Images.Remove(await DbInitializer.context.Images.Where(img => img.Id.Equals(imageId)).FirstOrDefaultAsync() ?? new Image());
-            await DbInitializer.context.SaveChangesAsync();
+            _context.Images.Remove(await _context.Images.Where(img => img.Id.Equals(imageId)).FirstOrDefaultAsync() ?? new Image());
+            await _context.SaveChangesAsync();
         }
         
         [HttpDelete]
         [Route("stockId/{stockId:int}")]
         public async void DeleteByStockId(int stockId)
         {
-            DbInitializer.context.Images.RemoveRange(await DbInitializer.context.Images.Where(img => img.StockId.Equals(stockId)).ToListAsync());
-            await DbInitializer.context.SaveChangesAsync();
+            _context.Images.RemoveRange(await _context.Images.Where(img => img.StockId.Equals(stockId)).ToListAsync());
+            await _context.SaveChangesAsync();
         }
     }
 }
