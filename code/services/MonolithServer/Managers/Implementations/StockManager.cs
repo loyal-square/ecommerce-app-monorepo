@@ -20,22 +20,31 @@ public class StockManager: IStockManager
         _context = apiDbContext;
     }
     public async Task<PaginatedResult> GetAllStocksWithFilters(bool? ascendingNames, bool? ascendingPrices, bool? ascendingCreatedDates,
-        bool? onlyAvailable, int? minimumQuantity, int? pageNumber, int? itemsPerPage)
+        bool? onlyAvailable, int? minimumQuantity, int? pageNumber, int? itemsPerPage, string? searchQuery = null, int? categoryId = null)
     {
-        var allStocks = await _context.Stocks.ToListAsync();
-        minimumQuantity ??= 0;
-        var filteredStockList = new List<Stock>();
-        foreach (var stock in allStocks.Where(stock => stock.Quantity >= minimumQuantity))
-            if (onlyAvailable == true)
-            {
-                if (stock.Available) filteredStockList.Add(stock);
-            }
-            else
-            {
-                filteredStockList.Add(stock);
-            }
+        var allStocks =  _context.Stocks.ToList();
 
-        var stocksForServer = _mapper.Map<List<StockForServer>>(filteredStockList);
+        if (searchQuery != null)
+        {
+            allStocks = allStocks.Where(stock => stock.Name?.ToLower().Contains(searchQuery.ToLower()) ?? false).ToList();
+        }
+
+        if (categoryId != null)
+        {
+            allStocks = allStocks.Where(stock => stock.CategoryId.Equals(categoryId)).ToList();
+        }
+
+        if (onlyAvailable is true)
+        {
+            allStocks = allStocks.Where(stock => stock.Available.Equals(true)).ToList();
+        }
+
+        if (minimumQuantity is > 0)
+        {
+            allStocks = allStocks.Where(stock => stock.Quantity >= minimumQuantity).ToList();
+        }
+
+        var stocksForServer = _mapper.Map<List<StockForServer>>(allStocks);
 
         var filteredStocksForServer = new List<StockForServer>();
         if (ascendingNames == true) filteredStocksForServer = stocksForServer.OrderBy(stock => stock.Name).ToList();

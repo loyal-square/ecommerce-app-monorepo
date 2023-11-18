@@ -7,7 +7,7 @@ public interface IStockManager
     public Task<PaginatedResult> GetAllStocksWithFilters(bool? ascendingNames,
         bool? ascendingPrices, bool? ascendingCreatedDates, bool? onlyAvailable,
         int? minimumQuantity, int? pageNumber,
-        int? itemsPerPage);
+        int? itemsPerPage, string? searchQuery = null, int? categoryId = null);
     public Task<PaginatedResult> GetStocksByStockIds(string[] stockIds, int pageNumber, int itemsPerPage);
     public Task<PaginatedResult> GetStocksByStoreId(int storeId, int pageNumber, int itemsPerPage);
     public Task<PaginatedResult> GetOnSaleStocks(float? minimumPriceMultiplier,
