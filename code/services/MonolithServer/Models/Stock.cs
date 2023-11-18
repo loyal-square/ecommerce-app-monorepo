@@ -1,8 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MonolithServer.Models
 {
 
     public class Stock
     {
+        [Key]
         public int Id { get; set; }
         public string? Name { get; set; }
         public float Price { get; set; }
