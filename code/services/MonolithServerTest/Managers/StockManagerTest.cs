@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -159,12 +161,14 @@ public class StockManagerTest
             new Stock()
             {
                 Id = 1,
-                Name = "Z"
+                Name = "Z",
+                CreatedDate = DateTime.UtcNow.Date
             },
             new Stock()
             {
                 Id = 2,
-                Name = "A"
+                Name = "A",
+                CreatedDate = DateTime.UtcNow.Date
             }
         };
         
@@ -173,12 +177,14 @@ public class StockManagerTest
             new StockWithRatingData()
             {
                 Id = 2,
-                Name = "A"
+                Name = "A",
+                CreatedDate = DateTime.UtcNow.Date
             },
             new StockWithRatingData()
             {
                 Id = 1,
-                Name = "Z"
+                Name = "Z",
+                CreatedDate = DateTime.UtcNow.Date
             }
         };
         
@@ -211,13 +217,15 @@ public class StockManagerTest
             {
                 Id = 1,
                 Name = "A",
-                Price = 1000
+                Price = 1000,
+                CreatedDate = DateTime.UtcNow.Date
             },
             new Stock()
             {
                 Id = 2,
                 Name = "B",
-                Price = 500
+                Price = 500,
+                CreatedDate = DateTime.UtcNow.Date
             }
         };
         
@@ -227,13 +235,15 @@ public class StockManagerTest
             {
                 Id = 2,
                 Name = "B",
-                Price = 500
+                Price = 500,
+                CreatedDate = DateTime.UtcNow.Date
             },
             new StockWithRatingData()
             {
                 Id = 1,
                 Name = "A",
-                Price = 1000
+                Price = 1000,
+                CreatedDate = DateTime.UtcNow.Date
             }
         };
         
@@ -267,21 +277,24 @@ public class StockManagerTest
                 Id = 1,
                 Name = "A",
                 Price = 1000,
-                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(3)
+                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(3),
+                CreatedDate =  DateTime.UtcNow.Date
             },
             new Stock()
             {
                 Id = 2,
                 Name = "B",
                 Price = 1000,
-                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(2)
+                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(2),
+                CreatedDate =  DateTime.UtcNow.Date
             },
             new Stock()
             {
                 Id = 3,
                 Name = "C",
                 Price = 1000,
-                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(1)
+                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(1),
+                CreatedDate =  DateTime.UtcNow.Date
             }
         };
         
@@ -292,21 +305,24 @@ public class StockManagerTest
                 Id = 3,
                 Name = "C",
                 Price = 1000,
-                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(1)
+                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(1),
+                CreatedDate =  DateTime.UtcNow.Date
             },
             new StockWithRatingData()
             {
                 Id = 2,
                 Name = "B",
                 Price = 1000,
-                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(2)
+                PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(2),
+                CreatedDate =  DateTime.UtcNow.Date
             },
              new StockWithRatingData()
              {
                  Id = 1,
                  Name = "A",
                  Price = 1000,
-                 PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(3)
+                 PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(3),
+                 CreatedDate =  DateTime.UtcNow.Date
              },
         };
         
@@ -339,13 +355,15 @@ public class StockManagerTest
             {
                 Id = 1,
                 Available = true,
-                Name = "Z"
+                Name = "Z",
+                CreatedDate =  DateTime.UtcNow.Date
             },
             new Stock()
             {
                 Id = 2,
                 Available = false,
-                Name = "A"
+                Name = "A",
+                CreatedDate =  DateTime.UtcNow.Date
             }
         };
 
@@ -356,6 +374,7 @@ public class StockManagerTest
                 Id = 1,
                 Name = "Z",
                 Available = true,
+                CreatedDate =  DateTime.UtcNow.Date
             }
         };
         
@@ -377,5 +396,198 @@ public class StockManagerTest
         Assert.Equal(JsonConvert.SerializeObject(paginatedResult), JsonConvert.SerializeObject(result));
     }
 
+    #endregion
+    #region GetStocksByStockIds
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(5)]
+    public async void GetStocksByStockIds_ReturnsCorrectStocks(int amount)
+    {
+        //Arrange
+        var dataHelper = new DataHelper();
+        var stocks = dataHelper.GenerateNewStockTestObjects(amount);
+        var expectedResult = new PaginatedResult()
+        {
+            PaginatedItems = stocks.Select(x => x.StockWithRatingData).ToList(),
+            TotalItems = amount,
+            TotalPages = amount > 0 ? 1 : 0
+        };
+        
+        await _dataContext.Stocks.AddRangeAsync(stocks.Select(x => x.Stock).ToList());
+        await _dataContext.SaveChangesAsync();
+        var stockManager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+        var stockIds = stocks.Select(x => x.Id).ToList();
+        //Act
+        var result = await stockManager.GetStocksByStockIds(stockIds, 1, 10);
+        //Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedResult), JsonConvert.SerializeObject(result));
+    }
+    #endregion
+    #region GetOnSaleStocks
+
+    [Theory]
+    [InlineData(1f, null, 1, 10, 0, 5, 5)]
+    [InlineData(0.5f, null, 1, 10, 0, 5, 5)]
+    [InlineData(0.5f, "Product Name", 1, 10, 0, 5, 5)]
+    [InlineData(1f, "Product Name", 1, 10, 0, 5, 5)]
+    [InlineData(0.5f, "Product Name", 1, 10, 4, 5, 0)]
+    [InlineData(1f, null, 1, 10, 4, 5, 0)]
+    public async void GetOnSaleStocks_ReturnsCorrectStocks(float? maximumPriceMultiplier, string? stockName, int? pageNumber, int? itemsPerPage,
+        float? minimumAverageRating, int stocksOnSale, int expectedReturnedCount)
+    {
+        //Arrange
+        var dataHelper = new DataHelper();
+        var stocks = dataHelper.GenerateNewStockTestObjects(stocksOnSale);
+        var expectedResult = new PaginatedResult()
+        {
+            PaginatedItems = expectedReturnedCount > 0 ? stocks.Select(x => x.StockWithRatingData).ToList() : new List<StockWithRatingData>(),
+            TotalItems = expectedReturnedCount,
+            TotalPages = expectedReturnedCount > 0 ? 1 : 0
+        };
+        
+        await _dataContext.Stocks.AddRangeAsync(stocks.Select(x => x.Stock).ToList());
+        await _dataContext.SaveChangesAsync();
+        
+        var stockManager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+        
+        //Act
+        var onSaleStocks = await stockManager.GetOnSaleStocks(maximumPriceMultiplier, stockName, pageNumber, itemsPerPage, minimumAverageRating);
+        //Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedResult), JsonConvert.SerializeObject(onSaleStocks));
+    }
+    
+    #endregion
+    #region CreateStock
+
+    [Theory]
+    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:30\"}", 0, 10, 5)]
+    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:50\"}", 0, 10, 5)]
+    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:10\"}", 0, 10, 5)]
+    public async void CreateStock_ValidDetails_ShouldNotThrowException(string createdDate, string expiryDate, float price, string priceMultObjString, int id, int storeId, int categoryId)
+    {
+        //Arrange
+        //format pricemultobjstring
+        var daysToAdd = int.Parse(priceMultObjString.Split("\"expiryDate\":")[1].Split(":")[1].Split("\"")[0]);
+        var regex = new Regex("today:(-?\\d+)");
+        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToShortDateString());
+        //format dates
+        DateTime? createdDateTime = createdDate.Contains("today")
+            ? DateTime.UtcNow.AddDays(int.Parse(createdDate.Split(":")[1]))
+            : null;
+        DateTime? expiryDateTime = expiryDate.Contains("today")
+            ? DateTime.UtcNow.AddDays(int.Parse(expiryDate.Split(":")[1]))
+            : null;
+
+        var stockToAdd = new Stock()
+        {
+            Id = id,
+            CreatedDate = createdDateTime,
+            ExpiryDate = expiryDateTime,
+            Price = price,
+            PriceMultiplierObjString = formattedObjString,
+            StoreId = storeId,
+            CategoryId = categoryId
+        };
+
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+
+        //Act
+        var createdStock = await manager.CreateStock(stockToAdd);
+        
+        //Assert
+        Assert.Equal(JsonConvert.SerializeObject(stockToAdd), JsonConvert.SerializeObject(createdStock));
+
+    }
+    
+    [Theory]
+    [InlineData("null/invalid", "today:50", 1000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:30\"}", 0, 10, 5)]
+     public async void CreateStock_NullCreatedDate_ShouldNotThrowException(string createdDate, string expiryDate, float price, string priceMultObjString, int id, int storeId, int categoryId)
+    {
+        //Arrange
+        //format pricemultobjstring
+        var daysToAdd = int.Parse(priceMultObjString.Split("\"expiryDate\":")[1].Split(":")[1].Split("\"")[0]);
+        var regex = new Regex("today:(-?\\d+)");
+        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToShortDateString());
+        //format dates
+        DateTime? createdDateTime = null;
+        DateTime? expiryDateTime = expiryDate.Contains("today")
+            ? DateTime.UtcNow.AddDays(int.Parse(expiryDate.Split(":")[1]))
+            : null;
+
+        var stockToAdd = new Stock()
+        {
+            Id = id,
+            CreatedDate = createdDateTime,
+            ExpiryDate = expiryDateTime,
+            Price = price,
+            PriceMultiplierObjString = formattedObjString,
+            StoreId = storeId,
+            CategoryId = categoryId
+        };
+
+        var expectedStock = new Stock()
+        {
+            Id = id,
+            CreatedDate = DateTime.UtcNow.Date,
+            ExpiryDate = expiryDateTime,
+            Price = price,
+            PriceMultiplierObjString = formattedObjString,
+            StoreId = storeId,
+            CategoryId = categoryId
+        };
+        
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+
+        //Act
+        var createdStock = await manager.CreateStock(stockToAdd);
+        
+        //Assert
+        Assert.Equal(expectedStock.CreatedDate, createdStock.CreatedDate?.Date);
+
+    }
+    
+    [Theory]
+    [InlineData("today:0", "today:20", 1000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:30\"}", 0, 10, 5)]
+    [InlineData("today:0", "today:50", 0, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:50\"}", 0, 10, 5)]
+    [InlineData("today:100", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:10\"}", 0, 10, 5)]
+    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:-10000\"}", 0, 10, 5)]
+    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:50\"}", 0, 0, 5)]
+    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:10\"}", 0, 10, 0)]
+    public async void CreateStock_InvalidDetails_ShouldThrowException(string createdDate, string expiryDate, float price, string priceMultObjString, int id, int storeId, int categoryId)
+    {
+        //Arrange
+        //format pricemultobjstring
+        var daysToAdd = int.Parse(priceMultObjString.Split("\"expiryDate\":")[1].Split(":")[1].Split("\"")[0]);
+        var regex = new Regex("today:(-?\\d+)");
+        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToShortDateString());
+        //format dates
+        DateTime? createdDateTime = createdDate.Contains("today")
+            ? DateTime.UtcNow.AddDays(int.Parse(createdDate.Split(":")[1]))
+            : null;
+        DateTime? expiryDateTime = expiryDate.Contains("today")
+            ? DateTime.UtcNow.AddDays(int.Parse(expiryDate.Split(":")[1]))
+            : null;
+
+        var stockToAdd = new Stock()
+        {
+            Id = id,
+            CreatedDate = createdDateTime,
+            ExpiryDate = expiryDateTime,
+            Price = price,
+            PriceMultiplierObjString = formattedObjString,
+            StoreId = storeId,
+            CategoryId = categoryId
+        };
+
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+
+        //Act
+        var exception = Record.ExceptionAsync(async () => await manager.CreateStock(stockToAdd));
+        
+        //Assert
+        Assert.NotNull(exception.Result);
+    }
+    
     #endregion
 }

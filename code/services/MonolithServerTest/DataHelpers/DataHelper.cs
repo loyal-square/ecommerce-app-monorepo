@@ -228,16 +228,16 @@ public class DataHelper
 
 public class StockAndStockWithRatings
 {
-    private static int _idCounter1 = 1;
-    private static int _idCounter2 = 1;
+    private static int _idCounter= 1;
     public readonly StockWithRatingData StockWithRatingData;
     public readonly Stock Stock;
+    public readonly int Id;
     public StockAndStockWithRatings()
     {
        StockWithRatingData = new StockWithRatingData
        {
-           Id = _idCounter1++,
-           Available = false,
+           Id = _idCounter,
+           Available = true,
            CategoryId = 1,
            CreatedDate = DateTime.UtcNow.AddDays(-1).Date,
            Currency = "NZD",
@@ -253,8 +253,8 @@ public class StockAndStockWithRatings
        
        Stock = new Stock
        {
-           Id = _idCounter2++,
-           Available = false,
+           Id = _idCounter,
+           Available = true,
            CategoryId = 1,
            CreatedDate = DateTime.UtcNow.AddDays(-1).Date,
            Currency = "NZD",
@@ -267,5 +267,9 @@ public class StockAndStockWithRatings
            StoreId = 1,
            PriceMultiplierObjString = DataHelper.GenerateNewPriceMultiplier(),
        };
+
+       Id = _idCounter;
+
+       _idCounter++;
     }
 }
