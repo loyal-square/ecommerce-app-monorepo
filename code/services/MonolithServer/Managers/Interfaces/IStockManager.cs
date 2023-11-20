@@ -15,6 +15,6 @@ public interface IStockManager
         float? minimumAverageRating);
     public Task<Stock> CreateStock(Stock stock);
     public Task<Stock> UpdateStock(Stock stockValues, int stockId);
-    public Task DeleteByStockId(Stock stock);
+    public Task DeleteByStockObject(Stock stock);
     public Task DeleteByStoreId(int storeId);
 }

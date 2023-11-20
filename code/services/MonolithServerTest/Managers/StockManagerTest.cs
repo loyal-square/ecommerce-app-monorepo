@@ -590,4 +590,127 @@ public class StockManagerTest
     }
     
     #endregion
+    #region UpdateStock
+
+    [Fact]
+    public async void UpdateStock_WithValidData_ShouldUpdateStock()
+    {
+        //Arrange
+        var stockToAdd = new Stock()
+        {
+            Id = 1,
+            Available = true,
+            CategoryId = 1,
+            StoreId = 1,
+            CreatedDate = DateTime.UtcNow,
+            Price = 1000,
+            Currency = "NZD"
+        };
+
+        await _dataContext.Stocks.AddAsync(stockToAdd);
+        await _dataContext.SaveChangesAsync();
+        
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+        //Act
+        stockToAdd.Name = "Updated Stock";
+        var updatedStock = await manager.UpdateStock(stockToAdd, 1);
+
+        //Assert
+        Assert.Equal(JsonConvert.SerializeObject(stockToAdd), JsonConvert.SerializeObject(updatedStock));
+    }
+    
+    [Fact]
+    public async void UpdateStock_WithInvalidData_ShouldNotUpdateStock()
+    {
+        //Arrange
+        var stockToAdd = new Stock()
+        {
+            Id = 1,
+            Available = true,
+            CategoryId = 1,
+            StoreId = 0,
+            CreatedDate = DateTime.UtcNow,
+            Price = 1000,
+            Currency = "NZD"
+        };
+
+        await _dataContext.Stocks.AddAsync(stockToAdd);
+        await _dataContext.SaveChangesAsync();
+        
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+        //Act
+        stockToAdd.Name = "Updated Stock";
+        var exception = Record.ExceptionAsync(async () => await manager.UpdateStock(stockToAdd, 1));
+
+        //Assert
+        Assert.NotNull(exception.Result);
+    }
+    
+    #endregion UpdateStock
+    #region DeleteStockByStockObject
+
+    [Fact]
+    public async void DeleteStockByStockObject_ValidStock_ShouldDelete()
+    {
+        //Arrange
+        var stockToAdd = new Stock()
+        {
+            Id = 1,
+            Available = true,
+            CategoryId = 1,
+            StoreId = 1,
+            CreatedDate = DateTime.UtcNow,
+            Price = 1000,
+            Currency = "NZD"
+        };
+
+        await _dataContext.Stocks.AddAsync(stockToAdd);
+        await _dataContext.SaveChangesAsync();
+        
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+        //Act
+        await manager.DeleteByStockObject(stockToAdd);
+        var stocksRemaining = _dataContext.Stocks.ToList();
+        //Assert
+        Assert.Empty(stocksRemaining);
+    }
+    
+    [Fact]
+    public async void DeleteStockByStockObject_InvalidStock_ShouldNotDelete()
+    {
+        //Arrange
+        var stockToAdd = new Stock()
+        {
+            Id = 1,
+            Available = true,
+            CategoryId = 1,
+            StoreId = 1,
+            CreatedDate = DateTime.UtcNow,
+            Price = 1000,
+            Currency = "NZD"
+        };
+        
+        var invalidStock = new Stock()
+        {
+            Id = 2,
+            Available = true,
+            CategoryId = 1,
+            StoreId = 1,
+            CreatedDate = DateTime.UtcNow,
+            Price = 1000,
+            Currency = "NZD"
+        };
+
+        await _dataContext.Stocks.AddAsync(stockToAdd);
+        await _dataContext.SaveChangesAsync();
+        
+        var manager = new StockManager(_mapper, new Logger<StockController>(new LoggerFactory()), _dataContext);
+        //Act
+        var exception = Record.ExceptionAsync(async () => await manager.DeleteByStockObject(invalidStock));
+
+        //Assert
+        Assert.NotNull(exception.Result);
+    }
+    
+    #endregion
 }

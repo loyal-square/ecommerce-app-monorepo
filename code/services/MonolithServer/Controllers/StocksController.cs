@@ -110,7 +110,7 @@ public class StockController : ControllerBase
                 throw new UnauthorizedAccessException("Attempted to access restricted resources. This is forbidden.");
             }
 
-            await _stockManager.DeleteByStockId(stock);
+            await _stockManager.DeleteByStockObject(stock);
         }
         else {
             throw new Exception($"Stock with ID {stockId} not found");

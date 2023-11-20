@@ -132,6 +132,40 @@ public class StockManager: IStockManager
         stock.CreatedDate ??= DateTime.UtcNow;
         stock.Id = 0;
         
+        IsStockDataValid(stock);
+        
+        var newStock = (await _context.Stocks.AddAsync(stock)).Entity;
+        await _context.SaveChangesAsync();
+        return newStock;
+    }
+
+    public async Task<Stock> UpdateStock(Stock stockValues, int stockId)
+    {
+        IsStockDataValid(stockValues);
+        
+        var stockToUpdate = await _context.Stocks.FindAsync(stockId);
+        stockToUpdate = stockValues;
+        await _context.SaveChangesAsync();
+        return stockToUpdate;
+    }
+
+    public async Task DeleteByStockObject(Stock stock)
+    {
+        _context.Stocks.Remove(stock);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteByStoreId(int storeId)
+    {
+        _context.Stocks.RemoveRange(await _context.Stocks
+            .Where(stock => stock.StoreId.Equals(storeId)).ToListAsync());
+        await _context.SaveChangesAsync();
+    }
+    
+    #region private
+
+    private void IsStockDataValid(Stock stock)
+    {
         //check for invalid data before creation
         if (stock.ExpiryDate < stock.CreatedDate){
             throw new DataException("Invalid expiry date.");
@@ -173,35 +207,7 @@ public class StockManager: IStockManager
         {
             throw new DataException("Invalid store Id 0.");
         }
-        
-        var newStock = (await _context.Stocks.AddAsync(stock)).Entity;
-        await _context.SaveChangesAsync();
-        return newStock;
     }
-
-    public async Task<Stock> UpdateStock(Stock stockValues, int stockId)
-    {
-        var stockToUpdate = await _context.Stocks.FindAsync(stockId);
-        stockToUpdate = stockValues;
-        await _context.SaveChangesAsync();
-        return stockToUpdate;
-    }
-
-    public async Task DeleteByStockId(Stock stock)
-    {
-        _context.Stocks.Remove(stock);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteByStoreId(int storeId)
-    {
-        _context.Stocks.RemoveRange(await _context.Stocks
-            .Where(stock => stock.StoreId.Equals(storeId)).ToListAsync());
-        await _context.SaveChangesAsync();
-    }
-    
-    #region private
-
     private PaginatedResult PaginateResults(dynamic unpaginatedItems, int itemsPerPage, int pageNumber)
     {
         dynamic paginatedItems = new List<dynamic>();
