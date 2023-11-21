@@ -143,7 +143,7 @@ public class DataHelper
                 Currency = "NZD",
                 Description = "Hello There I'm a description :)",
                 Details = "And I'm the details!",
-                ExpiryDate = DateTime.UtcNow.AddDays(30).Date,
+                ExpiryDate = DateTime.UtcNow.AddDays(3000).Date,
                 Name = "Product Name 1",
                 Price = 1234.5f,
                 Quantity = 50,

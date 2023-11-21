@@ -552,7 +552,7 @@ public class StockManagerTest
     [InlineData("today:0", "today:50", 0, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:50\"}", 0, 10, 5)]
     [InlineData("today:100", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:10\"}", 0, 10, 5)]
     [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:-10000\"}", 0, 10, 5)]
-    [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:50\"}", 0, 0, 5)]
+    [InlineData("today:0", "today:50", 2000, "{\"decimalMultiplier\":0.5,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:50\"}", 0, 0, 5)]
     [InlineData("today:0", "today:50", 1000, "{\"decimalMultiplier\":1,\"createdDate\":\"01/01/2010\",\"expiryDate\":\"today:10\"}", 0, 10, 0)]
     public async void CreateStock_InvalidDetails_ShouldThrowException(string createdDate, string expiryDate, float price, string priceMultObjString, int id, int storeId, int categoryId)
     {
