@@ -23,13 +23,6 @@ export class AppComponent implements OnInit {
     console.log(this.classes);
   }
   public overrideTheme() {
-    this.themeService.overrideLoyalSquareTheme({
-      name: 'pbtech',
-      colors: {
-        primary1: 'blue',
-        secondary1: 'white',
-        tertiary1: 'black',
-      },
-    });
+    this.themeService.overrideLoyalSquareTheme();
   }
 }
