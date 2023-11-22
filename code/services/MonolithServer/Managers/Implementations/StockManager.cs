@@ -157,8 +157,9 @@ public class StockManager: IStockManager
 
     public async Task DeleteByStoreId(int storeId)
     {
-        _context.Stocks.RemoveRange(await _context.Stocks
-            .Where(stock => stock.StoreId.Equals(storeId)).ToListAsync());
+        var stocksToRemove = await _context.Stocks
+            .Where(stock => stock.StoreId.Equals(storeId)).ToListAsync();
+        _context.Stocks.RemoveRange(stocksToRemove);
         await _context.SaveChangesAsync();
     }
     
