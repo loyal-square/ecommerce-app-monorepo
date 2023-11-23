@@ -50,10 +50,12 @@ export class ThemeService {
         color: (data) => data.colors.secondary1 ?? 'black',
       },
       baseOverlay: {
-        background: (data) => data.colors.primary1Transparent ?? 'rgba(255,255,255,0.9)'
+        background: (data) =>
+          data.colors.primary1Transparent ?? 'rgba(255,255,255,0.9)',
       },
       baseOverlayInverted: {
-        background: (data) => data.colors.secondary1Transparent ?? 'rgba(0,0,0,0.9)'
+        background: (data) =>
+          data.colors.secondary1Transparent ?? 'rgba(0,0,0,0.9)',
       },
       baseBackgroundTertiary: {
         background: (data) => data.colors.tertiary1 ?? 'white',
@@ -82,20 +84,53 @@ export class ThemeService {
   }
 
   public toggleLightDarkTheme() {
-    if (this.currentTheme?.name === 'loyalsquare-light') {
-      this.currentTheme = loyalsquareDark;
+    if (this.currentTheme?.name.includes('loyalsquare')) {
+      if (this.currentTheme?.name === 'loyalsquare-light') {
+        this.currentTheme = loyalsquareDark;
+      } else {
+        this.currentTheme = loyalsquareLight;
+      }
     } else {
-      this.currentTheme = loyalsquareLight;
+      if (this.currentTheme?.name === 'override-light') {
+        this.currentTheme = overrideDark;
+      } else {
+        this.currentTheme = overrideLight;
+      }
     }
 
     this.changeColorTheme();
   }
 
-  public overrideLoyalSquareTheme(customTheme: ThemeColors) {
-    this.currentTheme = customTheme;
+  public overrideLoyalSquareTheme(uniqueColor?: string | undefined) {
+    if (uniqueColor) {
+      overrideDark.colors.tertiary1 = uniqueColor;
+      overrideLight.colors.tertiary1 = uniqueColor;
+    }
+    if (this.currentTheme?.name.includes('light')) {
+      this.currentTheme = overrideLight;
+    } else {
+      this.currentTheme = overrideDark;
+    }
     this.sheet?.update(this.currentTheme);
   }
 }
+export let overrideLight: ThemeColors = {
+  name: 'override-light',
+  colors: {
+    primary1: 'white',
+    secondary1: 'black',
+    tertiary1: 'pink',
+  },
+};
+
+export let overrideDark: ThemeColors = {
+  name: 'override-dark',
+  colors: {
+    primary1: 'black',
+    secondary1: 'white',
+    tertiary1: 'pink',
+  },
+};
 
 export const loyalsquareLight: ThemeColors = {
   name: 'loyalsquare-light',
