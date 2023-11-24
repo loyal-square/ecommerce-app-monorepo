@@ -470,7 +470,7 @@ public class StockManagerTest
         //format pricemultobjstring
         var daysToAdd = int.Parse(priceMultObjString.Split("\"expiryDate\":")[1].Split(":")[1].Split("\"")[0]);
         var regex = new Regex("today:(-?\\d+)");
-        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToShortDateString());
+        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToString("d/MM/yyyy"));
         //format dates
         DateTime? createdDateTime = createdDate.Contains("today")
             ? DateTime.UtcNow.AddDays(int.Parse(createdDate.Split(":")[1]))
@@ -508,7 +508,7 @@ public class StockManagerTest
         //format pricemultobjstring
         var daysToAdd = int.Parse(priceMultObjString.Split("\"expiryDate\":")[1].Split(":")[1].Split("\"")[0]);
         var regex = new Regex("today:(-?\\d+)");
-        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToShortDateString());
+        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToString("d/MM/yyyy"));
         //format dates
         DateTime? createdDateTime = null;
         DateTime? expiryDateTime = expiryDate.Contains("today")
@@ -560,7 +560,7 @@ public class StockManagerTest
         //format pricemultobjstring
         var daysToAdd = int.Parse(priceMultObjString.Split("\"expiryDate\":")[1].Split(":")[1].Split("\"")[0]);
         var regex = new Regex("today:(-?\\d+)");
-        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToShortDateString());
+        var formattedObjString = regex.Replace(priceMultObjString, DateTime.UtcNow.AddDays(daysToAdd).ToString("d/MM/yyyy"));
         //format dates
         DateTime? createdDateTime = createdDate.Contains("today")
             ? DateTime.UtcNow.AddDays(int.Parse(createdDate.Split(":")[1]))
