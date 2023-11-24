@@ -84,8 +84,16 @@ public class RatingsManager: IRatingsManager
         return averageStockRatings;
     }
 
-    public async Task<StockRating?> CreateStockRating(StockRating stockRating)
+    public async Task<StockRating> CreateStockRating(StockRating stockRating)
     {
+        if (stockRating.RatingValue > 5)
+        {
+            throw new Exception("Rating value can't exceed 5.");
+        }
+
+        stockRating.Id = 0;
+        stockRating.RatedDate = DateTime.UtcNow;
+        
         //Find if stockRating userId matches any existing for the related stock. If it does, prevent creation of a new rating.
         var allStockRatings = await _context.StockRatings.ToListAsync();
         var matchingStockRating = allStockRatings.Find(s => s.StockId.Equals(stockRating.StockId) && s.UserId.Equals(stockRating.UserId));

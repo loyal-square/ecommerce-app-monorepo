@@ -24,12 +24,12 @@ public class AuthHelpers
         {
             StoreIdArray = JsonConvert.DeserializeObject<List<int>>(profile.StoreIdArrayString),
             Username = profile.Username
-        }).Where(info => info.StoreIdArray.Contains(storeId)).Select(x => x.Username);
+        }).Where(info => info.StoreIdArray?.Contains(storeId) ?? false).Select(x => x.Username);
 
-        return !matchingProfiles.Contains(userToken.FindFirst("username").Value);
+        return !matchingProfiles.Contains(userToken.FindFirst("username")?.Value);
     }
 
-    public static async Task<bool> AccessingRestrictedRatingsData(ClaimsPrincipal? userToken, StockRating stockRating, ApiDbContext context)
+    public static async Task<bool> AccessingRestrictedRatingsData(ClaimsPrincipal? userToken, StockRating? stockRating, ApiDbContext context)
     {
         if (userToken == null)
         {
@@ -37,8 +37,8 @@ public class AuthHelpers
             return true;
         }
 
-        var user = await context.Profiles.FindAsync(stockRating.UserId);
-        return !user?.Username.Equals(userToken.FindFirst("username").Value) ?? true;
+        var user = await context.Profiles.FindAsync(stockRating?.UserId);
+        return !user?.Username.Equals(userToken.FindFirst("username")?.Value) ?? true;
     }
 
     public static async Task<bool> AccessingRestrictedDataByStoreId(ClaimsPrincipal? userToken, int storeId, ApiDbContext context)
@@ -54,9 +54,9 @@ public class AuthHelpers
         {
             StoreIdArray = JsonConvert.DeserializeObject<List<int>>(profile.StoreIdArrayString),
             Username = profile.Username
-        }).Where(info => info.StoreIdArray.Contains(storeId)).Select(x => x.Username);
+        }).Where(info => info.StoreIdArray?.Contains(storeId) ?? false).Select(x => x.Username);
         
-        return !matchingProfiles.Contains(userToken.FindFirst("username").Value);
+        return !matchingProfiles.Contains(userToken.FindFirst("username")?.Value);
     }
 }
 
