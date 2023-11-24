@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
 using MonolithServer.Database;
 using MonolithServer.Managers.Interfaces;
 using MonolithServer.Models;
@@ -17,6 +18,7 @@ public class RatingsManager: IRatingsManager
     public async Task<List<StockRating>> GetStockRatingsByStockIds(List<int> stockIds)
     {
         var allStockRatings = await _context.StockRatings.Where(stockRating => stockIds.Contains(stockRating.StockId)).ToListAsync();
+        
         return allStockRatings;
     }
 

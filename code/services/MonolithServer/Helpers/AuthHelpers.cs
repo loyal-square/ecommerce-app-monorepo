@@ -43,6 +43,12 @@ public class AuthHelpers
 
     public static async Task<bool> AccessingRestrictedDataByStoreId(ClaimsPrincipal? userToken, int storeId, ApiDbContext context)
     {
+        if (userToken == null)
+        {
+            // Handle the case where the Authorization header is missing
+            return true;
+        }
+        
         var profiles = await context.Profiles.ToListAsync();
         var matchingProfiles = profiles.Select(profile => new ProfileKeyInfo()
         {
