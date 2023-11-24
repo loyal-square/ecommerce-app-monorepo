@@ -27,7 +27,7 @@ export class IconService {
 
   registerCommonIcons() {
     this.addSvgIcon("add", `${this.baseLocation}/common/Add.svg`);
-    this.addSvgIcon("brightness", `${this.baseLocation}/common/Brightness.svg`);
+    this.addSvgIcon("theme", `${this.baseLocation}/common/Theme.svg`);
     this.addSvgIcon("check-circle", `${this.baseLocation}/common/Check-circle.svg`);
     this.addSvgIcon("check", `${this.baseLocation}/common/Check.svg`);
     this.addSvgIcon("close", `${this.baseLocation}/common/Close.svg`);
