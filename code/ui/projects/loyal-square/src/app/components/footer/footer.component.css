@@ -51,7 +51,7 @@
 .footer-content-inner-wrapper {
   display: flex;
   justify-content: space-between;
-  @media (max-width:800px){
+  @media (max-width: 800px) {
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -61,8 +61,10 @@
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  @media (max-width:800px){
+  margin-top: 50px;
+  @media (max-width: 800px) {
     text-align: center;
+    margin-top: 0;
     justify-content: center;
     align-items: center;
     width: fit-content;
@@ -70,7 +72,7 @@
 }
 
 .footer-content-inner:first-of-type {
-  @media (max-width:800px){
+  @media (max-width: 800px) {
     margin-top: 50px;
     margin-bottom: 50px;
   }
@@ -78,11 +80,13 @@
 
 .footer-link {
   margin-top: 20px;
+  text-decoration: none;
+  font-weight: 100;
 }
 
 .footer-company-logo {
   margin-top: 180px !important;
-  @media (max-width:800px){
+  @media (max-width: 800px) {
     margin-top: 50px !important;
   }
 }
@@ -126,3 +130,5 @@
   width: 50%;
   aspect-ratio: 7.7/2.3;
 }
+
+
