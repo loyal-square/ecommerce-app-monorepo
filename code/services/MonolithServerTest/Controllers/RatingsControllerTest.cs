@@ -624,4 +624,136 @@ public class RatingsControllerTest
         //Assert
         Assert.Null(exception?.Message);
     }
+     [Fact]
+    public async void UpdateStockRating_WithNoCredentials_ShouldThrowException()
+    {
+        //arrange
+        var stockRating = new StockRating()
+        {
+            Id = 2,
+            StockId = 1,
+            RatingValue = 5,
+            RatedDate = DateTime.UtcNow,
+            StoreId = 1,
+            UserId = 1,
+        };
+      
+        
+        var manager = new RatingsManager(_dataContext);
+        var controller = new RatingsController(_dataContext, manager);
+        await _dataContext.StockRatings.AddAsync(stockRating);
+       
+        await _dataContext.SaveChangesAsync();
+        //Act
+        var exception = await Record.ExceptionAsync(async () => await controller.UpdateStockRatings(stockRating));
+        
+        //Assert
+        Assert.NotNull(exception?.Message);
+        Assert.Contains(exception?.Message, "Attempted to access restricted data. This is not allowed");
+    }
+    
+    [Fact]
+    public async void UpdateStockRating_WithInvalidCredentials_ShouldThrowException()
+    {
+        //arrange
+        var stockRating = new StockRating()
+        {
+            Id = 2,
+            StockId = 1,
+            RatingValue = 5,
+            RatedDate = DateTime.UtcNow,
+            StoreId = 1,
+            UserId = 1,
+        };
+        const string username = "username";
+        var fakeClaims = new List<Claim>()
+        {
+            new Claim("username", username),
+        };
+
+        var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");
+        var fakeClaimsPrincipal = new ClaimsPrincipal(fakeIdentity);
+        var manager = new RatingsManager(_dataContext);
+        var controller = new RatingsController(_dataContext, manager){
+            ControllerContext =
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = fakeClaimsPrincipal 
+                }
+            }
+        };
+        await _dataContext.StockRatings.AddAsync(stockRating);
+        await _dataContext.Profiles.AddAsync(new Profile()
+        {
+            Id = 1,
+            Username = username + "invalid",
+            StoreIdArrayString = "[\"1\"]",
+            Email = "email",
+            FirstName = "first",
+            LastName = "last",
+            ProfileImgUrl = "imgURL",
+            UserType = "USER"
+        });
+        await _dataContext.SaveChangesAsync();
+        //Act
+        var exception = await Record.ExceptionAsync(async () => await controller.UpdateStockRatings(stockRating));
+        
+        //Assert
+        Assert.NotNull(exception?.Message);
+        Assert.Contains(exception?.Message, "Attempted to access restricted data. This is not allowed");
+    }
+    
+    [Fact]
+    public async void UpdateStockRating_WithCredentials_ShouldNotThrowException()
+    {
+        //arrange
+        var stockRating = new StockRating()
+        {
+            Id = 1,
+            StockId = 1,
+            RatingValue = 5,
+            RatedDate = DateTime.UtcNow,
+            StoreId = 1,
+            UserId = 1,
+        };
+        const string username = "username";
+        var fakeClaims = new List<Claim>()
+        {
+            new Claim("username", username),
+        };
+
+        var fakeIdentity = new ClaimsIdentity(fakeClaims, "TestAuthType");
+        var fakeClaimsPrincipal = new ClaimsPrincipal(fakeIdentity);
+        var manager = new RatingsManager(_dataContext);
+        var controller = new RatingsController(_dataContext, manager){
+            ControllerContext =
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = fakeClaimsPrincipal 
+                }
+            }
+        };
+        await _dataContext.StockRatings.AddAsync(stockRating);
+        await _dataContext.Profiles.AddAsync(new Profile()
+        {
+            Id = 1,
+            Username = username,
+            StoreIdArrayString = "[\"1\"]",
+            Email = "email",
+            FirstName = "first",
+            LastName = "last",
+            ProfileImgUrl = "imgURL",
+            UserType = "USER"
+        });
+        await _dataContext.SaveChangesAsync();
+        //Act
+        stockRating.RatingValue = 3;
+        
+        var exception = await Record.ExceptionAsync(async () => await controller.UpdateStockRatings(stockRating));
+        
+        //Assert
+        Assert.Null(exception?.Message);
+    }
 }

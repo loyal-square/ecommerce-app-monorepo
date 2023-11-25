@@ -601,4 +601,74 @@ public class RatingsManagerTest
         //Assert
         Assert.Null(exception?.Message);
     }
+
+    [Fact]
+    public async void UpdateStockRatings_ValidRating_Succeeds()
+    {
+        //Arrange
+        var rating = new StockRating()
+        {
+            RatingValue = 5,
+            StockId = 1,
+            StoreId = 1,
+            UserId = 1
+        };
+
+        await _dataContext.StockRatings.AddAsync(rating);
+        await _dataContext.SaveChangesAsync();
+        
+        var manager = new RatingsManager(_dataContext);
+
+        rating.Id = 1;
+        rating.RatingValue = 3;
+        //Act
+        await manager.UpdateStockRating(rating);
+        //Assert
+        var updated = await _dataContext.StockRatings.FindAsync(1);
+        Assert.Equal(3, updated?.RatingValue);
+    }
+    [Fact]
+    public async void UpdateStockRatings_NotValidRating_ThrowsException()
+    {
+        //Arrange
+        var rating = new StockRating()
+        {
+            RatingValue = 5,
+            StockId = 1,
+            StoreId = 1,
+            UserId = 1
+        };
+
+        await _dataContext.StockRatings.AddAsync(rating);
+        await _dataContext.SaveChangesAsync();
+        
+        var manager = new RatingsManager(_dataContext);
+
+        rating.Id = 1;
+        rating.RatingValue = 10;
+        //Act
+        var exception = await Record.ExceptionAsync(async () =>  await manager.UpdateStockRating(rating));
+        //Assert
+        Assert.NotNull(exception?.Message);
+        Assert.Contains(exception?.Message, "Rating value can't exceed 5.");
+    }
+    [Fact]
+    public async void UpdateStockRatings_NotExistentRating_DoesNotThrowException()
+    {
+        //Arrange
+        var rating = new StockRating()
+        {
+            RatingValue = 5,
+            StockId = 1,
+            StoreId = 1,
+            UserId = 1
+        };
+        
+        var manager = new RatingsManager(_dataContext);
+        
+        //Act
+        var exception = await Record.ExceptionAsync(async () =>  await manager.UpdateStockRating(rating));
+        //Assert
+        Assert.Null(exception?.Message);
+    }
 }
