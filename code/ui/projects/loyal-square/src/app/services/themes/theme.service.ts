@@ -120,6 +120,8 @@ export let overrideLight: ThemeColors = {
     primary1: 'white',
     secondary1: 'black',
     tertiary1: 'pink',
+    primary1Transparent: 'rgba(255,255,255,0.9)',
+    secondary1Transparent: 'rgba(0,0,0,0.9)',
   },
 };
 
@@ -129,6 +131,8 @@ export let overrideDark: ThemeColors = {
     primary1: 'black',
     secondary1: 'white',
     tertiary1: 'pink',
+    primary1Transparent: 'rgba(0,0,0,0.9)',
+    secondary1Transparent: 'rgba(255,255,255,0.9)',
   },
 };
 
@@ -138,6 +142,8 @@ export const loyalsquareLight: ThemeColors = {
     primary1: 'white',
     secondary1: 'black',
     tertiary1: '#4387FF',
+    primary1Transparent: 'rgba(255,255,255,0.9)',
+    secondary1Transparent: 'rgba(0,0,0,0.9)',
   },
 };
 
@@ -147,5 +153,7 @@ export const loyalsquareDark: ThemeColors = {
     primary1: 'black',
     secondary1: 'white',
     tertiary1: '#4387FF',
+    primary1Transparent: 'rgba(0,0,0,0.9)',
+    secondary1Transparent: 'rgba(255,255,255,0.9)',
   },
 };
