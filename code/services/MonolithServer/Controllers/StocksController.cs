@@ -28,12 +28,12 @@ public class StockController : ControllerBase
         _context = context;
     }
     
-    [HttpPost]
+    [HttpGet]
     [Route("all/filters")]
-    public async Task<PaginatedResult> GetAllStocksWithFilters([FromBody] bool? ascendingNames,
-        [FromBody] bool? ascendingPrices, [FromBody] bool? ascendingCreatedDates, [FromBody] bool? onlyAvailable,
-        [FromBody] int? minimumQuantity, [FromBody] int? pageNumber,
-        [FromBody] int? itemsPerPage)
+    public async Task<PaginatedResult> GetAllStocksWithFilters([FromQuery] bool? ascendingNames,
+        [FromQuery] bool? ascendingPrices, [FromQuery] bool? ascendingCreatedDates, [FromQuery] bool? onlyAvailable,
+        [FromQuery] int? minimumQuantity, [FromQuery] int? pageNumber,
+        [FromQuery] int? itemsPerPage)
     {
         return await _stockManager.GetAllStocksWithFilters(ascendingNames, ascendingPrices, ascendingCreatedDates, onlyAvailable,
             minimumQuantity, pageNumber, itemsPerPage);
@@ -42,7 +42,7 @@ public class StockController : ControllerBase
     [HttpPost]
     [Route("byStockIds")]
     public async Task<PaginatedResult> GetStocksByStockIds([FromBody] List<int> stockIds,
-        [FromBody] int pageNumber, [FromBody] int itemsPerPage)
+        [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
     {
         return await _stockManager.GetStocksByStockIds(stockIds, pageNumber, itemsPerPage);
     }

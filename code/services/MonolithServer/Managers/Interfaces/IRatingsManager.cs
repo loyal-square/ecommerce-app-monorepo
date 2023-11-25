@@ -11,7 +11,8 @@ public interface IRatingsManager
     public Task<StockRating> CreateStockRating(StockRating stockRating);
     public Task DeleteStockRating(StockRating? stockRatingToDelete);
     public Task DeleteStockRatingByStoreId(int storeId);
-    
+    public Task UpdateStockRating(StockRating stockRating);
+
 
 
 

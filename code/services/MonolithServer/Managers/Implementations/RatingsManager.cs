@@ -121,4 +121,21 @@ public class RatingsManager: IRatingsManager
         _context.StockRatings.RemoveRange(stockRatingsToDelete);
         await _context.SaveChangesAsync();
     }
+
+    public async Task UpdateStockRating(StockRating stockRating)
+    {
+        if (stockRating.RatingValue > 5)
+        {
+            throw new Exception("Rating value can't exceed 5.");
+        }
+        
+        var ratingToUpdate = await _context.StockRatings.FindAsync(stockRating.Id);
+        if (ratingToUpdate != null)
+        {
+            ratingToUpdate.RatingValue = stockRating.RatingValue;
+            ratingToUpdate.RatedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+        
+    }
 }

@@ -46,7 +46,7 @@ namespace MonolithServer.Controllers
             return await _ratingsManager.GetAverageStockRatingsByStockIds(stockIds);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Authorize]
         [Route("create")]
         public async Task<StockRating?> CreateStockRating([FromBody] StockRating stockRating)
@@ -85,6 +85,19 @@ namespace MonolithServer.Controllers
             }
 
             await _ratingsManager.DeleteStockRatingByStoreId(storeId);
+        }
+        
+        [HttpPost]
+        [Authorize]
+        [Route("update")]
+        public async Task UpdateStockRatings([FromBody] StockRating stockRating)
+        {
+            if (await AuthHelpers.AccessingRestrictedRatingsData(User, stockRating, _context))
+            {
+                throw new UnauthorizedAccessException("Attempted to access restricted data. This is not allowed");
+            }
+
+            await _ratingsManager.UpdateStockRating(stockRating);
         }
     }
 }

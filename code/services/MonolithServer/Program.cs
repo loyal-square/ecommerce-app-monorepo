@@ -42,6 +42,7 @@ namespace MonolithServer
             builder.Services.AddControllers();
 
             builder.Services.AddScoped<IStockManager, StockManager>();
+            builder.Services.AddScoped<IRatingsManager, RatingsManager>();
             
             builder.Services.AddLogging();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
