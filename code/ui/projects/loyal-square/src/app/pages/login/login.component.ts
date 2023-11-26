@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { signIn } from '../../aws/amplify';
+import { signInWithRedirect } from 'aws-amplify/auth';
 
 @Component({
   selector: 'app-login',
@@ -28,5 +29,9 @@ export class LoginComponent {
     } catch (err) {
       alert(err);
     }
+  }
+
+  public async googleLogin() {
+    await signInWithRedirect({ provider: 'Google' });
   }
 }

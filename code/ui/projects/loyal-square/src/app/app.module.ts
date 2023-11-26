@@ -20,6 +20,7 @@ import { AnnouncementsComponent } from './pages/announcements/announcements.comp
 import { VerifyAccountComponent } from './pages/verify-account/verify-account.component';
 import { ShellComponent } from './components/shell/shell.component';
 import { HomeComponent } from './components/home/home.component';
+import { ProfileComponent } from './components/profile/profile.component';
 jss.setup(jssPresetDefault());
 jss.use(jssDynamic());
 
@@ -36,6 +37,7 @@ jss.use(jssDynamic());
     VerifyAccountComponent,
     ShellComponent,
     HomeComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

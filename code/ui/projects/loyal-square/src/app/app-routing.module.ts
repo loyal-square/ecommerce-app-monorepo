@@ -9,6 +9,7 @@ import { AnnouncementsComponent } from './pages/announcements/announcements.comp
 import { VerifyAccountComponent } from './pages/verify-account/verify-account.component';
 import { ShellComponent } from './components/shell/shell.component';
 import { HomeComponent } from './components/home/home.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,10 @@ const routes: Routes = [
       {
         path: 'announcements',
         component: AnnouncementsComponent,
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
       },
     ],
   },
