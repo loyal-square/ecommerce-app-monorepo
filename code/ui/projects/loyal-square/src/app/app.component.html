@@ -1,7 +1,10 @@
-<div [ngClass]="classes?.baseColors">
+<div [ngClass]="classes?.base">
   <button (click)="toggleTheme()">Toggle Theme</button>
   <button (click)="overrideTheme()">Override Theme</button>
-  <h1>Hello There</h1>
+  <a routerLink="">home</a>
+  <a routerLink="login">login</a>
+  <a routerLink="register">register</a>
+  <a routerLink="verify-account">verify</a>
+  <button (click)="logout()">Logout</button>
+  <router-outlet></router-outlet>
 </div>
-<router-outlet></router-outlet>
-

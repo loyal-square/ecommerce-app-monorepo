@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from './services/themes/theme.service';
 import jss, { Classes } from 'jss';
 import { ThemeStructure } from './services/themes/theme.types';
+import { signOut } from './aws/amplify';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -24,5 +25,8 @@ export class AppComponent implements OnInit {
   }
   public overrideTheme() {
     this.themeService.overrideLoyalSquareTheme();
+  }
+  public logout() {
+    signOut();
   }
 }
