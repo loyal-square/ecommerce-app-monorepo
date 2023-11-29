@@ -14,9 +14,9 @@ export class AppComponent implements OnInit {
     private themeService: ThemeService,
     private authService: AuthService
   ) {}
-  public ngOnInit(): void {
-    this.authService.init();
-    this.themeService.init();
+  public async ngOnInit(): Promise<void> {
+    await this.authService.init();
+    await this.themeService.init();
     this.extractClassesFromThemeService();
   }
   private extractClassesFromThemeService() {
