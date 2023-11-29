@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { confirmSignUp } from '../../aws/amplify';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-verify-account',
@@ -14,7 +14,11 @@ export class VerifyAccountComponent {
     email: '',
   });
 
-  constructor(public formBuilder: FormBuilder, public router: Router) {}
+  constructor(
+    public formBuilder: FormBuilder,
+    public router: Router,
+    public authService: AuthService
+  ) {}
 
   public async verifyUser(): Promise<void> {
     const { email, code } = this.verifyForm.value;
@@ -24,7 +28,7 @@ export class VerifyAccountComponent {
       return;
     }
     try {
-      await confirmSignUp(email, code);
+      await this.authService.confirmSignUp(email, code);
     } catch (err) {
       alert(err);
     }

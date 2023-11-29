@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from './services/themes/theme.service';
 import jss, { Classes } from 'jss';
 import { ThemeStructure } from './services/themes/theme.types';
-import { signOut } from './aws/amplify';
+import { AuthService } from './services/auth.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,8 +10,12 @@ import { signOut } from './aws/amplify';
 export class AppComponent implements OnInit {
   title = 'loyalSquare';
   classes: Classes<keyof ThemeStructure> | undefined;
-  constructor(private themeService: ThemeService) {}
+  constructor(
+    private themeService: ThemeService,
+    private authService: AuthService
+  ) {}
   public ngOnInit(): void {
+    this.authService.init();
     this.themeService.init();
     this.extractClassesFromThemeService();
   }
@@ -27,6 +31,6 @@ export class AppComponent implements OnInit {
     this.themeService.overrideLoyalSquareTheme();
   }
   public logout() {
-    signOut();
+    this.authService.signOut();
   }
 }

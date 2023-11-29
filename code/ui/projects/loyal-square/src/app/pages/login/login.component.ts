@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { signIn } from '../../aws/amplify';
 import { signInWithRedirect } from 'aws-amplify/auth';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,11 @@ export class LoginComponent {
     email: '',
   });
 
-  constructor(public formBuilder: FormBuilder, public router: Router) {}
+  constructor(
+    public formBuilder: FormBuilder,
+    public router: Router,
+    public authService: AuthService
+  ) {}
 
   public async login(): Promise<void> {
     const { email, password } = this.loginForm.value;
@@ -25,7 +29,7 @@ export class LoginComponent {
       return;
     }
     try {
-      await signIn(email, password);
+      await this.authService.signIn(email, password);
     } catch (err) {
       alert(err);
     }

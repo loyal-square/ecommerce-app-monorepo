@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { signUp } from '../../aws/amplify';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -15,7 +15,11 @@ export class RegisterComponent {
     confirmPassword: '',
   });
 
-  constructor(public formBuilder: FormBuilder, public router: Router) {}
+  constructor(
+    public formBuilder: FormBuilder,
+    public router: Router,
+    public authService: AuthService
+  ) {}
 
   public async registerUser(): Promise<void> {
     const { password, email, confirmPassword } = this.registerForm.value;
@@ -25,7 +29,7 @@ export class RegisterComponent {
       return;
     }
     try {
-      await signUp(password, email);
+      await this.authService.signUp(password, email);
       this.router.navigate(['/verify-account']);
     } catch (err) {
       alert(err);
