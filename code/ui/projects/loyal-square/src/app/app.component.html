@@ -1,6 +1,7 @@
 <router-outlet [ngClass]="classes?.base">
   <button (click)="toggleTheme()">Toggle Theme</button>
   <button (click)="overrideTheme()">Override Theme</button>
+  <mat-icon [svgIcon]="'theme'"></mat-icon>
   <h1>Hello There</h1>
 </router-outlet>
 <app-footer />
