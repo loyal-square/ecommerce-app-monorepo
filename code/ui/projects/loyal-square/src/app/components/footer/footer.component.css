@@ -7,10 +7,11 @@
 
 .subscribe-text {
   font-size: 1rem;
+  text-align: center;
 }
 
 .footer-inner-wrapper {
-  min-height: 400px;
+  min-height: 300px;
   width: 100%;
   background: url("../../../assets/images/footer-image.png");
   background-size: cover;
@@ -28,7 +29,12 @@
   left: 0;
   padding-top: 100px;
   padding-right: 100px;
-  border-top-right-radius: 50px;
+  @media (max-width: 1300px) {
+    width: 100%;
+    padding-right: 0;
+
+    padding-top: 0;
+  }
 }
 
 .footer-content {
@@ -38,52 +44,91 @@
   bottom: 0;
   left: 0;
   padding: 50px 50px 50px 150px;
-  border-top-right-radius: 50px;
+  @media (max-width: 800px) {
+    padding: 20px;
+  }
 }
 .footer-content-inner-wrapper {
   display: flex;
   justify-content: space-between;
+  @media (max-width: 800px) {
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
 }
 .footer-content-inner {
   display: flex;
   flex-grow: 1;
   flex-direction: column;
+  margin-top: 50px;
+  @media (max-width: 800px) {
+    text-align: center;
+    margin-top: 0;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+  }
+}
+
+.footer-content-inner:first-of-type {
+  @media (max-width: 800px) {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
 }
 
 .footer-link {
   margin-top: 20px;
+  text-decoration: none;
+  font-weight: 100;
 }
 
 .footer-company-logo {
   margin-top: 180px !important;
+  @media (max-width: 800px) {
+    margin-top: 50px !important;
+  }
 }
 
 .footer-credits {
-    position: absolute;
-    bottom: 50px;
-    right: 50px;
-    aspect-ratio: 1/1;
-    height: 300px;
-    padding: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: 500ms;
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  aspect-ratio: 1/1;
+  height: 300px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: 500ms;
+  @media (max-width: 1300px) {
+    display: none;
+  }
 }
 
-.footer-credits:hover{
-    transform: scale(1.1);
-    bottom: 100px;
-    box-shadow: 0px 50px 50px 5px rgba(0,0,0,0.5);
+.footer-credits-mobile {
+  text-align: center;
+  transition: 500ms;
+  padding: 50px;
+  @media (min-width: 1300px) {
+    display: none;
+  }
+}
+
+.footer-credits:hover {
+  height: 400px;
 }
 
 .footer-overlay {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
-.footer-company-logo-img{
+.footer-company-logo-img {
   width: 50%;
   aspect-ratio: 7.7/2.3;
 }
+
+

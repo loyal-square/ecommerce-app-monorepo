@@ -10,7 +10,7 @@
     </h2>
   </div>
   <div [ngClass]="['footer-inner-wrapper']">
-    <div [ngClass]="[classes?.baseOverlay, 'footer-overlay']">
+    <div [ngClass]="[classes?.baseOverlayInverted, 'footer-overlay']">
       <div [ngClass]="[classes?.baseColorsInverted, 'footer-credits']">
         <p>
           Made by <strong>Amy Lyu</strong> and <strong>Christopher Alba</strong>
@@ -19,10 +19,13 @@
       <div
         [ngClass]="[classes?.baseBackgroundTertiary, 'footer-content-wrapper']"
       >
+        <p [ngClass]="['footer-credits-mobile']">
+          Made by <strong>Amy Lyu</strong> and <strong>Christopher Alba</strong>
+        </p>
         <div [ngClass]="[classes?.baseColors, 'footer-content']">
           <div class="footer-content-inner-wrapper">
             <div [ngClass]="['footer-content-inner']">
-              <h1>Extra Links</h1>
+              <app-fancy-header headingText="Extra Links"/>
               <a
                 routerLink="/careers"
                 [ngClass]="['link', classes?.linkStyles, 'footer-link']"
@@ -45,7 +48,7 @@
               >
             </div>
             <div [ngClass]="['footer-content-inner']">
-              <h1>Contact</h1>
+              <app-fancy-header headingText="Contact"/>
               <a
                 href="https://www.google.com"
                 [ngClass]="['link', classes?.linkStyles, 'footer-link']"

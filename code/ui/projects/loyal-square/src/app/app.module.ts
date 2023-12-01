@@ -11,7 +11,8 @@ import jss from 'jss';
 import jssPresetDefault from 'jss-preset-default';
 import jssDynamic from 'jss-plugin-rule-value-function';
 
-import { FooterComponent } from './components/footer/footer.component';
+import { FooterComponent } from "./components/footer/footer.component";
+import { FancyHeaderComponent } from './components/fancy-header/fancy-header.component'
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { CareersComponent } from './pages/careers/careers.component';
@@ -49,6 +50,8 @@ jss.use(jssDynamic());
     ShellComponent,
     HomeComponent,
     ProfileComponent,
+    FooterComponent, 
+    FancyHeaderComponent,
     SvgVerifyComponent, 
     SvgLoginComponent, 
     SvgRegisterComponent,

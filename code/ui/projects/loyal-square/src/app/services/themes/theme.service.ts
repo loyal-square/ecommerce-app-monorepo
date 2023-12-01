@@ -1,12 +1,12 @@
 import { Injectable, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ThemeColors, ThemeStructure } from './theme.types';
+import { ThemeValues, ThemeStructure } from './theme.types';
 import jss, { Classes, StyleSheet } from 'jss';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  public currentTheme: ThemeColors | undefined;
+  public currentTheme: ThemeValues | undefined;
   public themeClasses: Classes<keyof ThemeStructure> | undefined;
   public loyalsquareStyles: ThemeStructure | undefined;
   public sheet: StyleSheet<keyof ThemeStructure> | undefined;
@@ -38,6 +38,9 @@ export class ThemeService {
         fontSize: this.currentTheme?.sizes?.headingSize ?? '1.3rem',
         fontWeight: 200,
         fontFamily: 'Arial, sans-serif',
+      },
+      baseBorder: {
+        border: (data) => `${data.sizes?.fancyBorderWidth} solid ${data.colors.secondary1}`,
       },
       base: {
         background: (data) => data.colors.primary1 ?? 'white',
@@ -114,38 +117,58 @@ export class ThemeService {
     this.sheet?.update(this.currentTheme);
   }
 }
-export let overrideLight: ThemeColors = {
+export let overrideLight: ThemeValues = {
   name: 'override-light',
   colors: {
     primary1: 'white',
     secondary1: 'black',
     tertiary1: 'pink',
+    primary1Transparent: 'rgba(255,255,255,0.9)',
+    secondary1Transparent: 'rgba(0,0,0,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
   },
 };
 
-export let overrideDark: ThemeColors = {
+export let overrideDark: ThemeValues = {
   name: 'override-dark',
   colors: {
     primary1: 'black',
     secondary1: 'white',
     tertiary1: 'pink',
+    primary1Transparent: 'rgba(0,0,0,0.9)',
+    secondary1Transparent: 'rgba(255,255,255,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
   },
 };
 
-export const loyalsquareLight: ThemeColors = {
+export const loyalsquareLight: ThemeValues = {
   name: 'loyalsquare-light',
   colors: {
     primary1: 'white',
     secondary1: 'black',
     tertiary1: '#4387FF',
+    primary1Transparent: 'rgba(255,255,255,0.9)',
+    secondary1Transparent: 'rgba(0,0,0,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
   },
 };
 
-export const loyalsquareDark: ThemeColors = {
+export const loyalsquareDark: ThemeValues = {
   name: 'loyalsquare-dark',
   colors: {
     primary1: 'black',
     secondary1: 'white',
     tertiary1: '#4387FF',
+    primary1Transparent: 'rgba(0,0,0,0.9)',
+    secondary1Transparent: 'rgba(255,255,255,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
   },
 };
