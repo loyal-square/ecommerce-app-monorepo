@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
 using MonolithServer.Database;
 using MonolithServer.Managers.Interfaces;
 using MonolithServer.Models;
@@ -17,6 +18,7 @@ public class RatingsManager: IRatingsManager
     public async Task<List<StockRating>> GetStockRatingsByStockIds(List<int> stockIds)
     {
         var allStockRatings = await _context.StockRatings.Where(stockRating => stockIds.Contains(stockRating.StockId)).ToListAsync();
+        
         return allStockRatings;
     }
 
@@ -82,8 +84,16 @@ public class RatingsManager: IRatingsManager
         return averageStockRatings;
     }
 
-    public async Task<StockRating?> CreateStockRating(StockRating stockRating)
+    public async Task<StockRating> CreateStockRating(StockRating stockRating)
     {
+        if (stockRating.RatingValue > 5)
+        {
+            throw new Exception("Rating value can't exceed 5.");
+        }
+
+        stockRating.Id = 0;
+        stockRating.RatedDate = DateTime.UtcNow;
+        
         //Find if stockRating userId matches any existing for the related stock. If it does, prevent creation of a new rating.
         var allStockRatings = await _context.StockRatings.ToListAsync();
         var matchingStockRating = allStockRatings.Find(s => s.StockId.Equals(stockRating.StockId) && s.UserId.Equals(stockRating.UserId));
@@ -110,5 +120,22 @@ public class RatingsManager: IRatingsManager
         if (stockRatingsToDelete.Count == 0) return;
         _context.StockRatings.RemoveRange(stockRatingsToDelete);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateStockRating(StockRating stockRating)
+    {
+        if (stockRating.RatingValue > 5)
+        {
+            throw new Exception("Rating value can't exceed 5.");
+        }
+        
+        var ratingToUpdate = await _context.StockRatings.FindAsync(stockRating.Id);
+        if (ratingToUpdate != null)
+        {
+            ratingToUpdate.RatingValue = stockRating.RatingValue;
+            ratingToUpdate.RatedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+        
     }
 }

@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MonolithServer.Controllers;
 using MonolithServer.Database;
 using MonolithServer.Managers.Interfaces;
 using MonolithServer.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MonolithServer.Managers.Implementations;
 
@@ -20,22 +23,31 @@ public class StockManager: IStockManager
         _context = apiDbContext;
     }
     public async Task<PaginatedResult> GetAllStocksWithFilters(bool? ascendingNames, bool? ascendingPrices, bool? ascendingCreatedDates,
-        bool? onlyAvailable, int? minimumQuantity, int? pageNumber, int? itemsPerPage)
+        bool? onlyAvailable, int? minimumQuantity, int? pageNumber, int? itemsPerPage, string? searchQuery = null, int? categoryId = null)
     {
-        var allStocks = await _context.Stocks.ToListAsync();
-        minimumQuantity ??= 0;
-        var filteredStockList = new List<Stock>();
-        foreach (var stock in allStocks.Where(stock => stock.Quantity >= minimumQuantity))
-            if (onlyAvailable == true)
-            {
-                if (stock.Available) filteredStockList.Add(stock);
-            }
-            else
-            {
-                filteredStockList.Add(stock);
-            }
+        var allStocks =  _context.Stocks.ToList();
 
-        var stocksForServer = _mapper.Map<List<StockForServer>>(filteredStockList);
+        if (searchQuery != null)
+        {
+            allStocks = allStocks.Where(stock => stock.Name?.ToLower().Contains(searchQuery.ToLower()) ?? false).ToList();
+        }
+
+        if (categoryId != null)
+        {
+            allStocks = allStocks.Where(stock => stock.CategoryId.Equals(categoryId)).ToList();
+        }
+
+        if (onlyAvailable is true)
+        {
+            allStocks = allStocks.Where(stock => stock.Available.Equals(true)).ToList();
+        }
+
+        if (minimumQuantity is > 0)
+        {
+            allStocks = allStocks.Where(stock => stock.Quantity >= minimumQuantity).ToList();
+        }
+
+        var stocksForServer = _mapper.Map<List<StockForServer>>(allStocks);
 
         var filteredStocksForServer = new List<StockForServer>();
         if (ascendingNames == true) filteredStocksForServer = stocksForServer.OrderBy(stock => stock.Name).ToList();
@@ -65,9 +77,9 @@ public class StockManager: IStockManager
         return PaginateResults((dynamic)stocksWithRatingData, (int)itemsPerPage, (int)pageNumber);
     }
 
-    public async Task<PaginatedResult> GetStocksByStockIds(string[] stockIds, int pageNumber, int itemsPerPage)
+    public async Task<PaginatedResult> GetStocksByStockIds(List<int> stockIds, int pageNumber, int itemsPerPage)
     {
-        var allStocks = await _context.Stocks.Where(stock => stockIds.Contains(stock.Id.ToString()))
+        var allStocks = await _context.Stocks.Where(stock => stockIds.Contains(stock.Id))
             .ToListAsync();
 
 
@@ -83,11 +95,11 @@ public class StockManager: IStockManager
         return PaginateResults((dynamic)stocksWithRatingData, itemsPerPage, pageNumber);
     }
 
-    public async Task<PaginatedResult> GetOnSaleStocks(float? minimumPriceMultiplier, string? stockName, int? pageNumber, int? itemsPerPage,
+    public async Task<PaginatedResult> GetOnSaleStocks(float? maximumPriceMultiplier, string? stockName, int? pageNumber, int? itemsPerPage,
         float? minimumAverageRating)
     {
         stockName ??= "";
-        minimumPriceMultiplier ??= 1;
+        maximumPriceMultiplier ??= 1;
         pageNumber ??= 1;
         itemsPerPage ??= 10;
 
@@ -98,7 +110,7 @@ public class StockManager: IStockManager
                             (stock.Name?.Trim().ToLower().Contains(stockName.Trim().ToLower()) ?? false))
             .Where(stock =>
                 stock.PriceMultiplier != null &&
-                stock.PriceMultiplier.DecimalMultiplier <= minimumPriceMultiplier &&
+                stock.PriceMultiplier.DecimalMultiplier <= maximumPriceMultiplier &&
                 stock.PriceMultiplier.CreatedDate <= DateTime.UtcNow &&
                 stock.PriceMultiplier.ExpiryDate > DateTime.UtcNow)
             .OrderBy(stock => stock.PriceMultiplier?.DecimalMultiplier).ToList();
@@ -117,22 +129,27 @@ public class StockManager: IStockManager
 
     public async Task<Stock> CreateStock(Stock stock)
     {
+        stock.CreatedDate ??= DateTime.UtcNow;
         stock.Id = 0;
+        
+        IsStockDataValid(stock);
+        
         var newStock = (await _context.Stocks.AddAsync(stock)).Entity;
         await _context.SaveChangesAsync();
-        var newStockForClient = _mapper.Map<Stock>(newStock);
-        return newStockForClient;
+        return newStock;
     }
 
     public async Task<Stock> UpdateStock(Stock stockValues, int stockId)
     {
+        IsStockDataValid(stockValues);
+        
         var stockToUpdate = await _context.Stocks.FindAsync(stockId);
         stockToUpdate = stockValues;
         await _context.SaveChangesAsync();
         return stockToUpdate;
     }
 
-    public async Task DeleteByStockId(Stock stock)
+    public async Task DeleteByStockObject(Stock stock)
     {
         _context.Stocks.Remove(stock);
         await _context.SaveChangesAsync();
@@ -140,13 +157,58 @@ public class StockManager: IStockManager
 
     public async Task DeleteByStoreId(int storeId)
     {
-        _context.Stocks.RemoveRange(await _context.Stocks
-            .Where(stock => stock.StoreId.Equals(storeId)).ToListAsync());
+        var stocksToRemove = await _context.Stocks
+            .Where(stock => stock.StoreId.Equals(storeId)).ToListAsync();
+        _context.Stocks.RemoveRange(stocksToRemove);
         await _context.SaveChangesAsync();
     }
     
     #region private
 
+    private void IsStockDataValid(Stock stock)
+    {
+        //check for invalid data before creation
+        if (stock.ExpiryDate < stock.CreatedDate){
+            throw new DataException("Invalid expiry date.");
+        }
+
+        if (stock.Price is 0)
+        {
+            throw new DataException("The price must be greater than 0.");
+        }
+
+        if (stock.PriceMultiplierObjString is not null)
+        {
+            var format = "d/MM/yyyy"; // your datetime format
+            var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
+            var decimalMultiplierObj = JsonConvert.DeserializeObject<PriceMultiplier>(stock.PriceMultiplierObjString ?? "{}", dateTimeConverter);
+            if (decimalMultiplierObj?.DecimalMultiplier is 0 or > 1)
+            {
+                throw new DataException("The price multiplier must be greater than 0 and less than 1.");
+            }
+
+            if (decimalMultiplierObj?.CreatedDate > decimalMultiplierObj?.ExpiryDate)
+            {
+                throw new DataException("The price multiplier created date must be less than its expriry date.");
+            }
+        
+            if (stock.ExpiryDate < decimalMultiplierObj?.ExpiryDate)
+            {
+                throw new DataException("The price multiplier expiry date must be less than the stock's expriry date.");
+            }
+        }
+        
+
+        if (stock.CategoryId is 0)
+        {
+            throw new DataException("Invalid category Id 0.");
+        }
+        
+        if (stock.StoreId is 0)
+        {
+            throw new DataException("Invalid store Id 0.");
+        }
+    }
     private PaginatedResult PaginateResults(dynamic unpaginatedItems, int itemsPerPage, int pageNumber)
     {
         dynamic paginatedItems = new List<dynamic>();

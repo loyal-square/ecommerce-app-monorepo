@@ -39,9 +39,9 @@ public class StockController : ControllerBase
             minimumQuantity, pageNumber, itemsPerPage);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("byStockIds")]
-    public async Task<PaginatedResult> GetStocksByStockIds([FromQuery] string[] stockIds,
+    public async Task<PaginatedResult> GetStocksByStockIds([FromBody] List<int> stockIds,
         [FromQuery] int pageNumber, [FromQuery] int itemsPerPage)
     {
         return await _stockManager.GetStocksByStockIds(stockIds, pageNumber, itemsPerPage);
@@ -110,7 +110,7 @@ public class StockController : ControllerBase
                 throw new UnauthorizedAccessException("Attempted to access restricted resources. This is forbidden.");
             }
 
-            await _stockManager.DeleteByStockId(stock);
+            await _stockManager.DeleteByStockObject(stock);
         }
         else {
             throw new Exception($"Stock with ID {stockId} not found");
