@@ -1,0 +1,17 @@
+<p>login works!</p>
+<form [formGroup]="loginForm" (ngSubmit)="login()">
+  <div>
+    <label for="email"> email </label>
+    <input id="email" type="text" formControlName="email" />
+  </div>
+
+  <div>
+    <label for="password"> password </label>
+    <input id="password" type="password" formControlName="password" />
+  </div>
+
+  <button class="button" type="submit">Login</button>
+</form>
+<button class="button" type="button" (click)="googleLogin()">
+  Google Login
+</button>

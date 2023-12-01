@@ -1,17 +1,17 @@
 import { Injectable, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ThemeColors, ThemeStructure } from './theme.types';
+import { ThemeValues, ThemeStructure } from './theme.types';
 import jss, { Classes, StyleSheet } from 'jss';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  public currentTheme: ThemeColors | undefined;
+  public currentTheme: ThemeValues | undefined;
   public themeClasses: Classes<keyof ThemeStructure> | undefined;
   public loyalsquareStyles: ThemeStructure | undefined;
   public sheet: StyleSheet<keyof ThemeStructure> | undefined;
 
-  public init(): void {
+  public async init(): Promise<void> {
     this.currentTheme = JSON.parse(
       localStorage.getItem('theme') ?? JSON.stringify(loyalsquareLight)
     );
@@ -39,6 +39,9 @@ export class ThemeService {
         fontWeight: 200,
         fontFamily: 'Arial, sans-serif',
       },
+      baseBorder: {
+        border: (data) => `${data.sizes?.fancyBorderWidth} solid ${data.colors.secondary1}`,
+      },
       base: {
         background: (data) => data.colors.primary1 ?? 'white',
         color: (data) => data.colors.secondary1 ?? 'black',
@@ -50,10 +53,12 @@ export class ThemeService {
         color: (data) => data.colors.secondary1 ?? 'black',
       },
       baseOverlay: {
-        background: (data) => data.colors.primary1Transparent ?? 'rgba(255,255,255,0.9)'
+        background: (data) =>
+          data.colors.primary1Transparent ?? 'rgba(255,255,255,0.9)',
       },
       baseOverlayInverted: {
-        background: (data) => data.colors.secondary1Transparent ?? 'rgba(0,0,0,0.9)'
+        background: (data) =>
+          data.colors.secondary1Transparent ?? 'rgba(0,0,0,0.9)',
       },
       baseBackgroundTertiary: {
         background: (data) => data.colors.tertiary1 ?? 'white',
@@ -82,35 +87,88 @@ export class ThemeService {
   }
 
   public toggleLightDarkTheme() {
-    if (this.currentTheme?.name === 'loyalsquare-light') {
-      this.currentTheme = loyalsquareDark;
+    if (this.currentTheme?.name.includes('loyalsquare')) {
+      if (this.currentTheme?.name === 'loyalsquare-light') {
+        this.currentTheme = loyalsquareDark;
+      } else {
+        this.currentTheme = loyalsquareLight;
+      }
     } else {
-      this.currentTheme = loyalsquareLight;
+      if (this.currentTheme?.name === 'override-light') {
+        this.currentTheme = overrideDark;
+      } else {
+        this.currentTheme = overrideLight;
+      }
     }
 
     this.changeColorTheme();
   }
 
-  public overrideLoyalSquareTheme(customTheme: ThemeColors) {
-    this.currentTheme = customTheme;
+  public overrideLoyalSquareTheme(uniqueColor?: string | undefined) {
+    if (uniqueColor) {
+      overrideDark.colors.tertiary1 = uniqueColor;
+      overrideLight.colors.tertiary1 = uniqueColor;
+    }
+    if (this.currentTheme?.name.includes('light')) {
+      this.currentTheme = overrideLight;
+    } else {
+      this.currentTheme = overrideDark;
+    }
     this.sheet?.update(this.currentTheme);
   }
 }
+export let overrideLight: ThemeValues = {
+  name: 'override-light',
+  colors: {
+    primary1: 'white',
+    secondary1: 'black',
+    tertiary1: 'pink',
+    primary1Transparent: 'rgba(255,255,255,0.9)',
+    secondary1Transparent: 'rgba(0,0,0,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
+  },
+};
 
-export const loyalsquareLight: ThemeColors = {
+export let overrideDark: ThemeValues = {
+  name: 'override-dark',
+  colors: {
+    primary1: 'black',
+    secondary1: 'white',
+    tertiary1: 'pink',
+    primary1Transparent: 'rgba(0,0,0,0.9)',
+    secondary1Transparent: 'rgba(255,255,255,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
+  },
+};
+
+export const loyalsquareLight: ThemeValues = {
   name: 'loyalsquare-light',
   colors: {
     primary1: 'white',
     secondary1: 'black',
     tertiary1: '#4387FF',
+    primary1Transparent: 'rgba(255,255,255,0.9)',
+    secondary1Transparent: 'rgba(0,0,0,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
   },
 };
 
-export const loyalsquareDark: ThemeColors = {
+export const loyalsquareDark: ThemeValues = {
   name: 'loyalsquare-dark',
   colors: {
     primary1: 'black',
     secondary1: 'white',
     tertiary1: '#4387FF',
+    primary1Transparent: 'rgba(0,0,0,0.9)',
+    secondary1Transparent: 'rgba(255,255,255,0.9)',
+  },
+  sizes: {
+    fancyBorderWidth: '3px',
   },
 };

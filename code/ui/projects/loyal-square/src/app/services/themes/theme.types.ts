@@ -1,4 +1,4 @@
-export type ThemeColors = {
+export type ThemeValues = {
   name: string;
   colors: {
     primary1: string;
@@ -26,6 +26,7 @@ export type ThemeColors = {
     pSize?: string;
     pMiniSize?: string;
     fontWeight?: number;
+    fancyBorderWidth: string
   };
 };
 
@@ -43,38 +44,41 @@ export type ThemeStructure = {
     fontWeight: number | string;
   };
   base: {
-    background: (data: ThemeColors) => string;
-    color: (data: ThemeColors) => string;
-    height: (data: ThemeColors) => string;
-    display: (data: ThemeColors) => string;
+    background: (data: ThemeValues) => string;
+    color: (data: ThemeValues) => string;
+    height: (data: ThemeValues) => string;
+    display: (data: ThemeValues) => string;
+  };
+  baseBorder: {
+    border: (data: ThemeValues) => string;
   };
   baseColors: {
-    background: (data: ThemeColors) => string;
-    color: (data: ThemeColors) => string;
+    background: (data: ThemeValues) => string;
+    color: (data: ThemeValues) => string;
   };
   baseOverlay: {
-    background: (data: ThemeColors) => string;
+    background: (data: ThemeValues) => string;
   },
   baseOverlayInverted: {
-    background: (data: ThemeColors) => string;
+    background: (data: ThemeValues) => string;
   },
   baseColorsInverted: {
-    background: (data: ThemeColors) => string;
-    color: (data: ThemeColors) => string;
+    background: (data: ThemeValues) => string;
+    color: (data: ThemeValues) => string;
   };
   baseBackgroundTertiary: {
-    background: (data: ThemeColors) => string;
+    background: (data: ThemeValues) => string;
   };
   linkStyles: {
-    color: (data: ThemeColors) => string;
+    color: (data: ThemeValues) => string;
     '&:hover': {
-      color: (data: ThemeColors) => string;
+      color: (data: ThemeValues) => string;
     };
   };
   linkStylesInverted: {
-    color: (data: ThemeColors) => string;
+    color: (data: ThemeValues) => string;
     '&:hover': {
-      color: (data: ThemeColors) => string;
+      color: (data: ThemeValues) => string;
     };
   };
 };

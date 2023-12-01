@@ -1,0 +1,14 @@
+<p>verify-account works!</p>
+<form [formGroup]="verifyForm" (ngSubmit)="verifyUser()">
+  <div>
+    <label for="email"> email </label>
+    <input id="email" type="text" formControlName="email" />
+  </div>
+
+  <div>
+    <label for="code"> Code </label>
+    <input id="code" type="text" formControlName="code" />
+  </div>
+
+  <button class="button" type="submit">Verify</button>
+</form>

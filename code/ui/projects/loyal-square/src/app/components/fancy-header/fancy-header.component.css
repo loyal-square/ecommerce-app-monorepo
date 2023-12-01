@@ -1,0 +1,16 @@
+.fancy-heading-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.underline {
+  width: 10%;
+  transition: width 500ms;
+  @media(max-width: 800px){
+    margin: 0 auto;
+    width: 30%;
+  }
+  .fancy-heading-wrapper:hover & {
+    width: 50%;
+  }
+}
