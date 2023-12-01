@@ -14,6 +14,7 @@ export class FooterComponent implements OnInit {
   constructor(public themeService: ThemeService) {}
   public ngOnInit(): void {
     this.classes = this.themeService.themeClasses;
+    console.log(this.classes);
   }
 
   public getImageLogoUrl(): string {

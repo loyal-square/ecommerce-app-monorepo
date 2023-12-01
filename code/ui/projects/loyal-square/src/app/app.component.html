@@ -1,4 +1,7 @@
-<div [ngClass]="classes?.base">
+<div *ngIf="initializing">
+  Initializing...
+</div>
+<div *ngIf="!initializing" [ngClass]="classes?.base">
   <button (click)="toggleTheme()">Toggle Theme</button>
   <button (click)="overrideTheme()">Override Theme</button>
   <a routerLink="">home</a>
@@ -8,4 +11,3 @@
   <button (click)="logout()">Logout</button>
   <router-outlet></router-outlet>
 </div>
-<app-footer />

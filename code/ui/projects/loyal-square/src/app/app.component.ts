@@ -12,18 +12,21 @@ import { IconService } from './services/icon.service';
 export class AppComponent implements OnInit {
   title = 'loyalSquare';
   classes: Classes<keyof ThemeStructure> | undefined;
-  
+  initializing: boolean = false;
+
   constructor(
     private themeService: ThemeService,
     private authService: AuthService,
     private iconService: IconService
   ) {}
-  
+
   public async ngOnInit(): Promise<void> {
+    this.initializing = true;
     await this.authService.init();
-    await this.themeService.init();
-    await this.iconService.init();
+    this.themeService.init();
+    this.iconService.init();
     this.extractClassesFromThemeService();
+    this.initializing = false;
   }
 
   private extractClassesFromThemeService() {
