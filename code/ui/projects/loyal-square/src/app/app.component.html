@@ -1,7 +1,11 @@
-<router-outlet [ngClass]="classes?.base">
+<div [ngClass]="classes?.base">
   <button (click)="toggleTheme()">Toggle Theme</button>
   <button (click)="overrideTheme()">Override Theme</button>
-  <mat-icon [svgIcon]="'theme'"></mat-icon>
-  <h1>Hello There</h1>
-</router-outlet>
+  <a routerLink="">home</a>
+  <a routerLink="login">login</a>
+  <a routerLink="register">register</a>
+  <a routerLink="verify-account">verify</a>
+  <button (click)="logout()">Logout</button>
+  <router-outlet></router-outlet>
+</div>
 <app-footer />

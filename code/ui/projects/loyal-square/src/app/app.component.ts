@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from './services/themes/theme.service';
 import { Classes } from 'jss';
 import { ThemeStructure } from './services/themes/theme.types';
+import { AuthService } from './services/auth.service';
 import { IconService } from './services/icon.service';
 
 @Component({
@@ -11,13 +12,17 @@ import { IconService } from './services/icon.service';
 export class AppComponent implements OnInit {
   title = 'loyalSquare';
   classes: Classes<keyof ThemeStructure> | undefined;
-
-  constructor(private themeService: ThemeService, private iconService: IconService) { }
-
-  public ngOnInit(): void {
-    this.iconService.init();
-    this.themeService.init();
-
+  
+  constructor(
+    private themeService: ThemeService,
+    private authService: AuthService,
+    private iconService: IconService
+  ) {}
+  
+  public async ngOnInit(): Promise<void> {
+    await this.authService.init();
+    await this.themeService.init();
+    await this.iconService.init();
     this.extractClassesFromThemeService();
   }
 
@@ -33,5 +38,8 @@ export class AppComponent implements OnInit {
 
   public overrideTheme() {
     this.themeService.overrideLoyalSquareTheme();
+  }
+  public logout() {
+    this.authService.signOut();
   }
 }
