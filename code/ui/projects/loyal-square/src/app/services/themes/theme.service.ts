@@ -11,7 +11,7 @@ export class ThemeService {
   public loyalsquareStyles: ThemeStructure | undefined;
   public sheet: StyleSheet<keyof ThemeStructure> | undefined;
 
-  public init(): void {
+  public async init(): Promise<void> {
     this.currentTheme = JSON.parse(
       localStorage.getItem('theme') ?? JSON.stringify(loyalsquareLight)
     );
